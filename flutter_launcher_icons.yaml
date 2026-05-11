@@ -1,0 +1,22 @@
+flutter_launcher_icons:
+  image_path: "assets/icons/todailyIcon.png"
+  android: true
+  min_sdk_android: 21
+  adaptive_icon_background: "#dedede"
+  adaptive_icon_foreground: "assets/icons/todailyIcon.png"
+  adaptive_icon_foreground_inset: 16
+  ios: true
+  remove_alpha_ios: true
+  background_color_ios: "#dedede"
+  web:
+    generate: true
+    image_path: "assets/icons/todailyIcon.png"
+    background_color: "#dedede"
+    theme_color: "#dedede"
+  windows:
+    generate: true
+    image_path: "assets/icons/todailyIcon.png"
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: "assets/icons/todailyIcon.png"
