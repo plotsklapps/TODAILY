@@ -1,5 +1,5 @@
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:todaily/models/journal_entry.dart';
