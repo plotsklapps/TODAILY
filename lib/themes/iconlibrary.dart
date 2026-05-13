@@ -20,4 +20,16 @@ class IconLibrary {
   static Widget iconBack = const HugeIcon(
     icon: HugeIcons.strokeRoundedArrowLeft01,
   );
+
+  static Widget iconCheck = const HugeIcon(
+    icon: HugeIcons.strokeRoundedCheckmarkCircle02,
+  );
+
+  static Widget iconWarning = const HugeIcon(
+    icon: HugeIcons.strokeRoundedAlertCircle,
+  );
+
+  static Widget iconError = const HugeIcon(
+    icon: HugeIcons.strokeRoundedCancelCircle,
+  );
 }

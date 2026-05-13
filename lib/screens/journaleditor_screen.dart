@@ -189,14 +189,11 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
       bottomNavigationBar: BottomAppBar(
         child: Row(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: IconLibrary.iconBack,
-              ),
+            IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: IconLibrary.iconBack,
             ),
           ],
         ),
