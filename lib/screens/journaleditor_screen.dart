@@ -3,11 +3,10 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:todaily/modals/emojipicker_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
-import 'package:todaily/services/modal_service.dart';
+import 'package:todaily/themes/iconlibrary.dart';
 import 'package:todaily/widgets/char_counter_widget.dart';
 
 class JournalEditorScreen extends StatefulWidget {
@@ -41,6 +40,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
       sSelectedEmojis.value = List<String>.from(entry.emojis);
     } else {
       _controller = QuillController.basic();
+      sSelectedEmojis.value = <String>[];
     }
   }
 
@@ -70,133 +70,122 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     final List<String> selectedEmojis = sSelectedEmojis.watch(context);
 
+    // Get bottom inset (usually keyboard)
+    final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
+    // We add 80 to account for FAB + some padding
+    final double totalBottomInset = keyboardHeight + 80;
+
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    DateFormat(
-                      "yyyy, MMMM d'${_getOrdinal(widget.date.day)}'",
-                    ).format(widget.date),
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  CharCounterWidget(
-                    maxCharacters: 500,
-                    controller: _controller,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  QuillSimpleToolbar(
-                    controller: _controller,
-                    config: const QuillSimpleToolbarConfig(
-                      toolbarSectionSpacing: 0.1,
-                      buttonOptions: QuillSimpleToolbarButtonOptions(
-                        base: QuillToolbarBaseButtonOptions<dynamic, dynamic>(
-                          iconSize: 12,
-                        ),
-                      ),
-                      showUndo: false,
-                      showRedo: false,
-                      showAlignmentButtons: true,
-                      showFontFamily: false,
-                      showInlineCode: false,
-                      showDividers: false,
-                      showHeaderStyle: false,
-                      showIndent: false,
-                      showJustifyAlignment: false,
-                      showListCheck: false,
-                      showFontSize: false,
-                      showColorButton: false,
-                      showSuperscript: false,
-                      showSubscript: false,
-                      showClearFormat: false,
-                      showBackgroundColorButton: false,
-                      showLink: false,
-                      showListBullets: false,
-                      showListNumbers: false,
-                      showCodeBlock: false,
-                      showQuote: false,
-                      showStrikeThrough: false,
-                    ),
-                  ),
-                ],
-              ),
-              const Divider(),
-              Expanded(
-                child: QuillEditor.basic(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(
+          DateFormat(
+            "yyyy, MMMM d'${_getOrdinal(widget.date.day)}'",
+          ).format(widget.date),
+          style: theme.textTheme.titleLarge!.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: CharCounterWidget(
+              maxCharacters: 1000,
+              controller: _controller,
+            ),
+          ),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                QuillSimpleToolbar(
                   controller: _controller,
-                  config: const QuillEditorConfig(
-                    placeholder: 'Write your story here...',
+                  config: const QuillSimpleToolbarConfig(
+                    toolbarSectionSpacing: 0.1,
+                    buttonOptions: QuillSimpleToolbarButtonOptions(
+                      base: QuillToolbarBaseButtonOptions<dynamic, dynamic>(
+                        iconSize: 12,
+                      ),
+                    ),
+                    showUndo: false,
+                    showRedo: false,
+                    showAlignmentButtons: true,
+                    showFontFamily: false,
+                    showInlineCode: false,
+                    showDividers: false,
+                    showHeaderStyle: false,
+                    showIndent: false,
+                    showJustifyAlignment: false,
+                    showListCheck: false,
+                    showFontSize: false,
+                    showColorButton: false,
+                    showSuperscript: false,
+                    showSubscript: false,
+                    showClearFormat: false,
+                    showBackgroundColorButton: false,
+                    showLink: false,
+                    showListBullets: false,
+                    showListNumbers: false,
+                    showCodeBlock: false,
+                    showQuote: false,
+                    showStrikeThrough: false,
                   ),
                 ),
+              ],
+            ),
+            const Divider(),
+            Expanded(
+              child: QuillEditor.basic(
+                controller: _controller,
+                config: QuillEditorConfig(
+                  // Combination of padding and scrollBottomInset to make
+                  // text scroll above FAB instead of behind it.
+                  padding: const EdgeInsets.only(bottom: 100),
+                  scrollBottomInset: totalBottomInset,
+                  placeholder: '...',
+                ),
               ),
-              const SizedBox(height: 24),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          FloatingActionButton(
-            heroTag: 'emojiFAB',
-            onPressed: () async {
-              await ModalService.showModal(
-                context: context,
-                child: const EmojiPickerModal(),
-                title: 'Emoji Picker',
-              );
-            },
-            child: const Icon(LucideIcons.smile),
-          ),
-          const SizedBox(width: 16),
-          FloatingActionButton(
-            heroTag: 'saveFAB',
-            onPressed: () async {
-              if (selectedEmojis.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Please select at least one emoji'),
-                  ),
-                );
-                return;
-              }
-              final Box<JournalEntry> box = Hive.box<JournalEntry>('journals');
-              final String dateKey = _getDateKey(widget.date);
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'saveFAB',
+        onPressed: () async {
+          if (selectedEmojis.isEmpty || selectedEmojis.length > 3) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please select 1 to 3 emojis'),
+              ),
+            );
+            return;
+          }
+          final Box<JournalEntry> box = Hive.box<JournalEntry>('journals');
+          final String dateKey = _getDateKey(widget.date);
 
-              final JournalEntry entry = JournalEntry(
-                dateKey: dateKey,
-                description: _controller.document.toDelta().toJson(),
-                emojis: selectedEmojis,
-              );
-              await box.put(dateKey, entry);
+          final JournalEntry entry = JournalEntry(
+            dateKey: dateKey,
+            description: _controller.document.toDelta().toJson(),
+            emojis: selectedEmojis,
+          );
+          await box.put(dateKey, entry);
 
-              if (context.mounted) {
-                Navigator.pop(context);
-              }
-            },
-            child: const Icon(Icons.save_outlined),
-          ),
-          const SizedBox(width: 16),
-          FloatingActionButton(
-            heroTag: 'imageFAB',
-            onPressed: () {},
-            child: const Icon(LucideIcons.image),
-          ),
-        ],
+          if (context.mounted) {
+            Navigator.pop(context);
+          }
+        },
+        child: IconLibrary.iconSave,
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
@@ -207,7 +196,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: const Icon(Icons.arrow_back_ios_new_outlined),
+                icon: IconLibrary.iconBack,
               ),
             ),
           ],

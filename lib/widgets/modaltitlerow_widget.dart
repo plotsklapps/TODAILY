@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:todaily/themes/iconlibrary.dart';
 
 class ModalTitleRow extends StatelessWidget {
   const ModalTitleRow({
@@ -23,7 +23,7 @@ class ModalTitleRow extends StatelessWidget {
             IconButton(
               padding: const EdgeInsets.only(right: 16),
               onPressed: () {},
-              icon: const Icon(LucideIcons.circleX),
+              icon: IconLibrary.iconClose,
             ),
           ],
         ),

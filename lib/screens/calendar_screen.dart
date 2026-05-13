@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/journaleditor_screen.dart';
+import 'package:todaily/themes/iconlibrary.dart';
 
 final Signal<List<JournalEntry>> journalBoxSignal = Signal<List<JournalEntry>>(
   Hive.box<JournalEntry>('journals').values.toList(),
@@ -49,12 +49,16 @@ class _CalendarScreenState extends State<CalendarScreen>
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'todaily $currentYear',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: theme.textTheme.titleLarge!.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         bottom: TabBar(
           controller: _tabController,
@@ -120,23 +124,23 @@ class _CalendarScreenState extends State<CalendarScreen>
           }).toList();
 
           if (monthEntries.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text('No entries this month.'),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text('Tap '),
-                      Icon(Icons.add_circle_outline_sharp),
-                      Text(' to write your todaily.'),
+                      const Text('Tap '),
+                      IconLibrary.iconPlus,
+                      const Text(' to write your todaily.'),
                     ],
                   ),
                 ],
@@ -180,7 +184,7 @@ class _CalendarScreenState extends State<CalendarScreen>
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add_circle_outline_sharp),
+        child: IconLibrary.iconPlus,
         onPressed: () async {
           await Navigator.push(
             context,
@@ -197,7 +201,7 @@ class _CalendarScreenState extends State<CalendarScreen>
           children: <Widget>[
             IconButton(
               onPressed: () {},
-              icon: const Icon(LucideIcons.menu),
+              icon: IconLibrary.iconMenu,
             ),
           ],
         ),
