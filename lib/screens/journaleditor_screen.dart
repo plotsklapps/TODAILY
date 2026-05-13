@@ -7,7 +7,7 @@ import 'package:signals/signals_flutter.dart';
 import 'package:todaily/modals/emojipicker_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/themes/iconlibrary.dart';
-import 'package:todaily/widgets/char_counter_widget.dart';
+import 'package:todaily/widgets/charcounter_widget.dart';
 
 class JournalEditorScreen extends StatefulWidget {
   const JournalEditorScreen({
@@ -94,7 +94,6 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: CharCounterWidget(
-              maxCharacters: 1000,
               controller: _controller,
             ),
           ),

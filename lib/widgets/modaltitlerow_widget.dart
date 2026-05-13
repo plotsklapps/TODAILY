@@ -3,10 +3,12 @@ import 'package:todaily/themes/iconlibrary.dart';
 
 class ModalTitleRow extends StatelessWidget {
   const ModalTitleRow({
+    required this.context,
     required this.title,
     super.key,
   });
 
+  final BuildContext context;
   final String title;
 
   @override
@@ -19,10 +21,12 @@ class ModalTitleRow extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             const SizedBox(width: 48),
-            Text(title, style: theme.textTheme.headlineSmall),
+            Text(title, style: theme.textTheme.titleLarge),
             IconButton(
               padding: const EdgeInsets.only(right: 16),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context);
+              },
               icon: IconLibrary.iconClose,
             ),
           ],

@@ -17,9 +17,9 @@ class ModalService {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              ModalTitleRow(title: title),
+              ModalTitleRow(context: context, title: title),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.all(8),
                 child: child,
               ),
             ],
