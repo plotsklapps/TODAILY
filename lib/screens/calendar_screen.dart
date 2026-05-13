@@ -50,6 +50,7 @@ class _CalendarScreenState extends State<CalendarScreen>
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    journalBoxSignal.watch(context);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,

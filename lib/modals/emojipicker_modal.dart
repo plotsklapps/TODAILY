@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
-
-import '../themes/emojilibrary.dart';
+import 'package:todaily/themes/emojilibrary.dart';
 
 // We store the keys (String) in Hive for JournalEntry.
 final Signal<List<String>> sSelectedEmojis = Signal<List<String>>(
@@ -14,9 +13,18 @@ final Signal<List<String>> sAvailableEmojis = Signal<List<String>>(
   debugLabel: 'sAvailableEmojis',
 );
 
-class EmojiPickerModal extends StatelessWidget {
-  const EmojiPickerModal({super.key});
+class EmojiPickerModal extends StatefulWidget {
+  const EmojiPickerModal({
+    required this.onNext,
+    super.key,
+  });
+  final VoidCallback onNext;
 
+  @override
+  State<EmojiPickerModal> createState() => _EmojiPickerModalState();
+}
+
+class _EmojiPickerModalState extends State<EmojiPickerModal> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -33,7 +41,7 @@ class EmojiPickerModal extends StatelessWidget {
           alignment: WrapAlignment.center,
           children: availableEmojis.map((String emojiKey) {
             final bool isSelected = selectedEmojis.contains(emojiKey);
-            return FilterChip(
+            return ChoiceChip(
               label: getEmojiWidget(emojiKey),
               selected: isSelected,
               showCheckmark: false,
@@ -53,6 +61,11 @@ class EmojiPickerModal extends StatelessWidget {
               },
             );
           }).toList(),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: selectedEmojis.isEmpty ? null : widget.onNext,
+          child: const Text('Next'),
         ),
       ],
     );

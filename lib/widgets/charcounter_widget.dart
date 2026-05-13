@@ -50,7 +50,7 @@ class CharCounterWidget extends StatelessWidget {
         return InkWell(
           onTap: () => _showCharLimitModal(context),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: Text(
               maxCharacters > 0
                   ? '$displayCount / $maxCharacters'

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:intl/intl.dart';
-import 'package:signals/signals_flutter.dart';
 import 'package:todaily/modals/emojipicker_modal.dart';
+import 'package:todaily/modals/imagepicker_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
+import 'package:todaily/services/modal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 import 'package:todaily/widgets/charcounter_widget.dart';
 
@@ -71,9 +73,6 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final List<String> selectedEmojis = sSelectedEmojis.watch(context);
-
-    // Get bottom inset (usually keyboard)
     final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
 
     // We add 80 to account for FAB + some padding
@@ -162,27 +161,46 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
       floatingActionButton: FloatingActionButton(
         heroTag: 'saveFAB',
         onPressed: () async {
-          if (selectedEmojis.isEmpty || selectedEmojis.length > 3) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Please select 1 to 3 emojis'),
-              ),
-            );
-            return;
-          }
-          final Box<JournalEntry> box = Hive.box<JournalEntry>('journals');
-          final String dateKey = _getDateKey(widget.date);
+          // Force a keyboard close.
+          await SystemChannels.textInput.invokeMethod('TextInput.hide');
+          FocusManager.instance.primaryFocus?.unfocus();
 
-          final JournalEntry entry = JournalEntry(
-            dateKey: dateKey,
-            description: _controller.document.toDelta().toJson(),
-            emojis: selectedEmojis,
+          if (!context.mounted) return;
+          await ModalService.showModal(
+            context: context,
+            title: 'Select 1-3 emojis',
+            child: EmojiPickerModal(
+              onNext: () async {
+                Navigator.pop(context); // Close emoji modal
+                await ModalService.showModal(
+                  context: context,
+                  title: 'Add up to 6 images',
+                  child: ImagePickerModal(
+                    onSave: (List<String> images) async {
+                      final Box<JournalEntry> box = Hive.box<JournalEntry>(
+                        'journals',
+                      );
+                      final String dateKey = _getDateKey(widget.date);
+
+                      final JournalEntry entry = JournalEntry(
+                        dateKey: dateKey,
+                        description: _controller.document.toDelta().toJson(),
+                        emojis: sSelectedEmojis.value,
+                        imagePaths: images,
+                      );
+                      await box.put(dateKey, entry);
+
+                      if (context.mounted) {
+                        Navigator.of(context).popUntil((Route<dynamic> route) {
+                          return route.isFirst;
+                        });
+                      }
+                    },
+                  ),
+                );
+              },
+            ),
           );
-          await box.put(dateKey, entry);
-
-          if (context.mounted) {
-            Navigator.pop(context);
-          }
         },
         child: IconLibrary.iconSave,
       ),
