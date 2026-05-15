@@ -1,5 +1,5 @@
 name: todaily
-description: "Daily Journal."
+description: "Daily Journal (with AI)."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
