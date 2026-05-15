@@ -19,12 +19,8 @@ class JournalEntryAdapter extends TypeAdapter<JournalEntry> {
     return JournalEntry(
       dateKey: fields[0] as String,
       description: (fields[1] as List).cast<dynamic>(),
-      imagePaths: fields[2] == null
-          ? const <String>[]
-          : (fields[2] as List).cast<String>(),
-      emojis: fields[3] == null
-          ? const <String>[]
-          : (fields[3] as List).cast<String>(),
+      imagePaths: (fields[2] as List).cast<String>(),
+      emojis: (fields[3] as List).cast<String>(),
       tags: fields[4] == null
           ? const <String>[]
           : (fields[4] as List).cast<String>(),

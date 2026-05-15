@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
-import 'package:hive_ce/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:todaily/modals/emojipicker_modal.dart';
 import 'package:todaily/modals/imagepicker_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
+import 'package:todaily/services/journal_service.dart';
 import 'package:todaily/services/modal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 import 'package:todaily/widgets/charcounter_widget.dart';
@@ -26,15 +25,16 @@ class JournalEditorScreen extends StatefulWidget {
 
 class _JournalEditorScreenState extends State<JournalEditorScreen> {
   late final QuillController _controller;
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    final Box<JournalEntry> box = Hive.box<JournalEntry>('journals');
-    final String dateKey = _getDateKey(widget.date);
+    final String dateKey = JournalService.getDateKey(widget.date);
+    final JournalEntry? entry = JournalService.readJournal(dateKey);
 
-    if (box.containsKey(dateKey)) {
-      final JournalEntry entry = box.get(dateKey)!;
+    if (entry != null) {
       _controller = QuillController(
         document: Document.fromDelta(Delta.fromJson(entry.description)),
         selection: const TextSelection.collapsed(offset: 0),
@@ -44,16 +44,18 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
       _controller = QuillController.basic();
       sSelectedEmojis.value = <String>[];
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
+    _scrollController.dispose();
     super.dispose();
-  }
-
-  String _getDateKey(DateTime date) {
-    return DateFormat('yyyyMMdd').format(date);
   }
 
   String _getOrdinal(int day) {
@@ -143,8 +145,10 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
             ),
             const Divider(),
             Expanded(
-              child: QuillEditor.basic(
+              child: QuillEditor(
                 controller: _controller,
+                scrollController: _scrollController,
+                focusNode: _focusNode,
                 config: QuillEditorConfig(
                   // Combination of padding and scrollBottomInset to make
                   // text scroll above FAB instead of behind it.
@@ -161,37 +165,52 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
       floatingActionButton: FloatingActionButton(
         heroTag: 'saveFAB',
         onPressed: () async {
-          // Force a keyboard close.
-          await SystemChannels.textInput.invokeMethod('TextInput.hide');
-          FocusManager.instance.primaryFocus?.unfocus();
+          // Hide the keyboard.
+          _focusNode.unfocus();
 
           if (!context.mounted) return;
+
+          // Get dateKey for Hive storage.
+          final String dateKey = JournalService.getDateKey(widget.date);
+
           await ModalService.showModal(
             context: context,
             title: 'Select 1-3 emojis',
             child: EmojiPickerModal(
               onNext: () async {
-                Navigator.pop(context); // Close emoji modal
+                // Pop the sheet.
+                Navigator.pop(context);
+
+                // Show ImagePickerModal.
                 await ModalService.showModal(
                   context: context,
                   title: 'Add up to 6 images',
                   child: ImagePickerModal(
+                    initialImages:
+                        JournalService.readJournal(dateKey)?.imagePaths ??
+                        const <String>[],
                     onSave: (List<String> images) async {
-                      final Box<JournalEntry> box = Hive.box<JournalEntry>(
-                        'journals',
-                      );
-                      final String dateKey = _getDateKey(widget.date);
-
+                      // Create/Update a JournalEntry Object.
                       final JournalEntry entry = JournalEntry(
                         dateKey: dateKey,
                         description: _controller.document.toDelta().toJson(),
                         emojis: sSelectedEmojis.value,
                         imagePaths: images,
                       );
-                      await box.put(dateKey, entry);
 
+                      // Use JournalService to save the entry.
+                      final JournalEntry? existing = JournalService.readJournal(
+                        dateKey,
+                      );
+                      if (existing != null) {
+                        await JournalService.updateJournal(entry);
+                      } else {
+                        await JournalService.createJournal(entry);
+                      }
+
+                      // Pop all sheets and return to CalendarScreen.
                       if (context.mounted) {
-                        Navigator.of(context).popUntil((Route<dynamic> route) {
+                        Navigator.popUntil(context, (Route<dynamic> route) {
                           return route.isFirst;
                         });
                       }

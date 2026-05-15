@@ -1,20 +1,25 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:todaily/services/toast_service.dart';
+import 'package:todaily/themes/iconlibrary.dart';
 
 class ImagePickerModal extends StatefulWidget {
   const ImagePickerModal({
     required this.onSave,
+    this.initialImages = const <String>[],
     super.key,
   });
   final ValueChanged<List<String>> onSave;
+  final List<String> initialImages;
 
   @override
   State<ImagePickerModal> createState() => _ImagePickerModalState();
 }
 
 class _ImagePickerModalState extends State<ImagePickerModal> {
-  final List<String> _imagePaths = <String>[];
+  late final List<String> _imagePaths = List<String>.from(widget.initialImages);
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(ImageSource source) async {
@@ -40,14 +45,31 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            IconButton.outlined(
-              onPressed: () => _pickImage(ImageSource.gallery),
-              icon: const Icon(Icons.photo_library),
+            FloatingActionButton.extended(
+              heroTag: 'galleryFAB',
+              onPressed: () async {
+                await _pickImage(ImageSource.gallery);
+              },
+              label: Row(
+                children: <Widget>[
+                  IconLibrary.iconImage,
+                  const SizedBox(width: 8),
+                  const Text('Gallery'),
+                ],
+              ),
             ),
-            const SizedBox(width: 20),
-            IconButton.outlined(
-              onPressed: () => _pickImage(ImageSource.camera),
-              icon: const Icon(Icons.camera_alt),
+            const SizedBox(width: 16),
+            FloatingActionButton.extended(
+              onPressed: () async {
+                await _pickImage(ImageSource.camera);
+              },
+              label: Row(
+                children: <Widget>[
+                  IconLibrary.iconCamera,
+                  const SizedBox(width: 8),
+                  const Text('Camera'),
+                ],
+              ),
             ),
           ],
         ),
@@ -87,11 +109,27 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
           },
         ),
         const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: _imagePaths.isEmpty
-              ? null
-              : () => widget.onSave(_imagePaths),
-          child: const Text('Save Journal Entry'),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: FilledButton(
+                onPressed: () {
+                  if (_imagePaths.isEmpty) {
+                    ToastService.showWarning(
+                      title: 'Select an Image',
+                      subtitle:
+                          'Please add between 1 and 6 images to illustrate '
+                          'your day.',
+                    );
+                    return;
+                  } else {
+                    widget.onSave(_imagePaths);
+                  }
+                },
+                child: const Text('Save Journal Entry'),
+              ),
+            ),
+          ],
         ),
       ],
     );

@@ -32,4 +32,12 @@ class IconLibrary {
   static Widget iconError = const HugeIcon(
     icon: HugeIcons.strokeRoundedCancelCircle,
   );
+
+  static Widget iconImage = const HugeIcon(
+    icon: HugeIcons.strokeRoundedImageAdd02,
+  );
+
+  static Widget iconCamera = const HugeIcon(
+    icon: HugeIcons.strokeRoundedCameraAdd01,
+  );
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:todaily/services/toast_service.dart';
 import 'package:todaily/themes/emojilibrary.dart';
 
 // We store the keys (String) in Hive for JournalEntry.
@@ -33,7 +34,12 @@ class _EmojiPickerModalState extends State<EmojiPickerModal> {
 
     return Column(
       children: <Widget>[
-        Text('Select 1-3 emojis', style: theme.textTheme.bodyLarge),
+        Text(
+          'Please choose 1 to 3 emojis to express how your '
+          'day felt.',
+          style: theme.textTheme.bodyLarge,
+          textAlign: TextAlign.center,
+        ),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -63,9 +69,25 @@ class _EmojiPickerModalState extends State<EmojiPickerModal> {
           }).toList(),
         ),
         const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: selectedEmojis.isEmpty ? null : widget.onNext,
-          child: const Text('Next'),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: FilledButton(
+                onPressed: () {
+                  if (selectedEmojis.isEmpty) {
+                    ToastService.showWarning(
+                      title: 'Select an Emoji',
+                      subtitle: 'Choose at least one emoji to continue.',
+                    );
+                    return;
+                  } else {
+                    widget.onNext();
+                  }
+                },
+                child: const Text('Next'),
+              ),
+            ),
+          ],
         ),
       ],
     );

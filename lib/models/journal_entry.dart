@@ -7,12 +7,13 @@ class JournalEntry extends HiveObject {
   JournalEntry({
     required this.dateKey,
     required this.description,
-    this.imagePaths = const <String>[],
-    this.emojis = const <String>[],
+    required this.imagePaths,
+    required this.emojis,
     this.tags = const <String>[],
   });
+
   @HiveField(0)
-  final String dateKey; // yyyyMMdd
+  final String dateKey;
 
   @HiveField(1)
   final List<dynamic> description;

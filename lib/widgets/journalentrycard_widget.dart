@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/journaleditor_screen.dart';
 import 'package:todaily/themes/emojilibrary.dart';
+import 'package:todaily/widgets/journalimagesgrid_widget.dart';
 
 class JournalEntryCard extends StatelessWidget {
   const JournalEntryCard({
@@ -129,32 +128,8 @@ class JournalEntryCard extends StatelessWidget {
                 if (entry.imagePaths.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
-                    child: SizedBox(
-                      width: 120,
-                      height: 100,
-                      child: Wrap(
-                        spacing: 2,
-                        runSpacing: 2,
-                        children: entry.imagePaths.take(6).map((String path) {
-                          final double itemWidth = entry.imagePaths.length > 1
-                              ? (120 / 2 - 2)
-                              : 120;
-                          final double itemHeight = entry.imagePaths.length > 2
-                              ? (100 / 3 - 2)
-                              : (entry.imagePaths.length > 1 ? 100 : 100);
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: SizedBox(
-                              width: itemWidth,
-                              height: itemHeight,
-                              child: Image.file(
-                                File(path),
-                                fit: BoxFit.fitWidth,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
+                    child: JournalImagesGrid(
+                      imagePaths: entry.imagePaths,
                     ),
                   ),
               ],
