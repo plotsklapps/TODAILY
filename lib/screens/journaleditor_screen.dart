@@ -189,6 +189,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                   context: context,
                   title: 'Add up to 6 images',
                   child: ImagePickerModal(
+                    initialImages: sSelectedImages.value,
                     onSave: (List<String> images) async {
                       // Create/Update a JournalEntry Object.
                       final JournalEntry entry = JournalEntry(

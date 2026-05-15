@@ -30,6 +30,7 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
   @override
   void initState() {
     super.initState();
+    // Fetch previous images or create empty Signal.
     sSelectedImages.value = List<String>.from(widget.initialImages);
   }
 
@@ -42,8 +43,8 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
     }
     final XFile? pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
-      final List<String> current = List<String>.from(sSelectedImages.value);
-      current.add(pickedFile.path);
+      final List<String> current = List<String>.from(sSelectedImages.value)
+        ..add(pickedFile.path);
       sSelectedImages.value = current;
     }
   }
@@ -113,8 +114,7 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
                     onPressed: () {
                       final List<String> current = List<String>.from(
                         sSelectedImages.value,
-                      );
-                      current.removeAt(index);
+                      )..removeAt(index);
                       sSelectedImages.value = current;
                     },
                   ),
