@@ -192,25 +192,14 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                   child: ImagePickerModal(
                     initialImages: sSelectedImages.value,
                     onSave: (List<String> images) async {
-                      // 1. Generate AI Title
-                      String? generatedTitle;
-                      try {
-                        final String journalText = _controller.document
-                            .toPlainText();
-                        generatedTitle = await AIService.generateText(
-                          'Write a descriptive title for this journal entry in 3-4 words: $journalText',
-                        );
-                      } catch (e) {
-                        generatedTitle = 'My Todaily'; // Fallback
-                      }
-
-                      // Create/Update a JournalEntry Object.
+                      // Create/Update a JournalEntry Object without an AI title initially.
                       final JournalEntry entry = JournalEntry(
                         dateKey: _dateKey,
                         description: _controller.document.toDelta().toJson(),
                         emojis: sSelectedEmojis.value,
                         imagePaths: images,
-                        aiTitle: generatedTitle,
+                        aiTitle:
+                            null, // Title is null, signaling it's being generated.
                       );
 
                       // Use JournalService to save the entry.
@@ -228,6 +217,33 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                         Navigator.popUntil(context, (Route<dynamic> route) {
                           return route.isFirst;
                         });
+                      }
+
+                      // Trigger background AI title generation.
+                      try {
+                        final String journalText = _controller.document
+                            .toPlainText();
+                        final String generatedTitle =
+                            await AIService.generateTitle(journalText);
+
+                        // Update the entry with the generated title.
+                        final JournalEntry updatedEntry = JournalEntry(
+                          dateKey: _dateKey,
+                          description: entry.description,
+                          emojis: entry.emojis,
+                          imagePaths: entry.imagePaths,
+                          aiTitle: generatedTitle,
+                        );
+                        await JournalService.updateJournal(updatedEntry);
+                      } catch (e) {
+                        final JournalEntry fallbackEntry = JournalEntry(
+                          dateKey: _dateKey,
+                          description: entry.description,
+                          emojis: entry.emojis,
+                          imagePaths: entry.imagePaths,
+                          aiTitle: 'My Todaily', // Fallback
+                        );
+                        await JournalService.updateJournal(fallbackEntry);
                       }
                     },
                   ),

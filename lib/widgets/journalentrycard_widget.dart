@@ -3,7 +3,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/journaleditor_screen.dart';
 import 'package:todaily/themes/emojilibrary.dart';
-import 'package:todaily/widgets/journalimagesgrid_widget.dart';
+import 'package:todaily/widgets/journalimagesrow_widget.dart';
 
 class JournalEntryCard extends StatelessWidget {
   const JournalEntryCard({
@@ -37,12 +37,12 @@ class JournalEntryCard extends StatelessWidget {
     ).toPlainText();
 
     // AI Title Logic
-    final String displayTitle = entry.aiTitle ?? 'Loading title...';
+    final String displayTitle = entry.aiTitle ?? 'Generating title...';
     final bool isAiTitleLoading = entry.aiTitle == null;
 
     return SizedBox(
       width: double.infinity,
-      height: 140,
+      height: 300,
       child: Card(
         child: InkWell(
           onTap: () async {
@@ -61,28 +61,13 @@ class JournalEntryCard extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: <Widget>[
-                // EMOJI'S.
-                if (entry.emojis.isNotEmpty)
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: entry.emojis.take(3).map((String emojiKey) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: getEmojiWidget(emojiKey),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                const SizedBox(width: 12),
                 // JOURNAL ENTRY.
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text.rich(
                             TextSpan(
@@ -104,46 +89,58 @@ class JournalEntryCard extends StatelessWidget {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  displayTitle,
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    overflow: TextOverflow.ellipsis,
+                          if (entry.emojis.isNotEmpty)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: entry.emojis.take(3).map((
+                                String emojiKey,
+                              ) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: getEmojiWidget(emojiKey),
                                   ),
-                                ),
-                                if (isAiTitleLoading)
-                                  const SizedBox(
-                                    height: 2,
-                                    width: 50,
-                                    child: LinearProgressIndicator(),
-                                  ),
-                              ],
+                                );
+                              }).toList(),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            displayTitle,
+                            maxLines: 2,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                          if (isAiTitleLoading)
+                            const SizedBox(
+                              height: 2,
+                              width: 50,
+                              child: LinearProgressIndicator(),
+                            ),
                         ],
                       ),
                       const SizedBox(height: 8),
                       Text(
                         descriptionText,
-                        maxLines: 2,
+                        maxLines: 5,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      // IMAGES.
+                      if (entry.imagePaths.isNotEmpty)
+                        JournalImagesRow(
+                          imagePaths: entry.imagePaths,
+                        ),
                     ],
                   ),
                 ),
-                // IMAGES.
-                if (entry.imagePaths.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: JournalImagesGrid(
-                      imagePaths: entry.imagePaths,
-                    ),
-                  ),
               ],
             ),
           ),

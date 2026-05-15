@@ -5,6 +5,7 @@ class IconLibrary {
   static Widget iconMenu = const HugeIcon(
     icon: HugeIcons.strokeRoundedMenu01,
   );
+
   static Widget iconPlus = const HugeIcon(
     icon: HugeIcons.strokeRoundedPlusSignCircle,
   );
@@ -35,6 +36,10 @@ class IconLibrary {
 
   static Widget iconImage = const HugeIcon(
     icon: HugeIcons.strokeRoundedImageAdd02,
+  );
+
+  static Widget iconBrokenImage = const HugeIcon(
+    icon: HugeIcons.strokeRoundedImageDelete02,
   );
 
   static Widget iconCamera = const HugeIcon(
