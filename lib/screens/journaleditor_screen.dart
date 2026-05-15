@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:todaily/modals/emojipicker_modal.dart';
 import 'package:todaily/modals/imagepicker_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
+import 'package:todaily/services/ai_service.dart';
 import 'package:todaily/services/format_service.dart';
 import 'package:todaily/services/journal_service.dart';
 import 'package:todaily/services/modal_service.dart';
@@ -191,12 +192,25 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                   child: ImagePickerModal(
                     initialImages: sSelectedImages.value,
                     onSave: (List<String> images) async {
+                      // 1. Generate AI Title
+                      String? generatedTitle;
+                      try {
+                        final String journalText = _controller.document
+                            .toPlainText();
+                        generatedTitle = await AIService.generateText(
+                          'Write a descriptive title for this journal entry in 3-4 words: $journalText',
+                        );
+                      } catch (e) {
+                        generatedTitle = 'My Todaily'; // Fallback
+                      }
+
                       // Create/Update a JournalEntry Object.
                       final JournalEntry entry = JournalEntry(
                         dateKey: _dateKey,
                         description: _controller.document.toDelta().toJson(),
                         emojis: sSelectedEmojis.value,
                         imagePaths: images,
+                        aiTitle: generatedTitle,
                       );
 
                       // Use JournalService to save the entry.

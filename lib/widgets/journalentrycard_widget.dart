@@ -35,9 +35,10 @@ class JournalEntryCard extends StatelessWidget {
     final String descriptionText = Document.fromJson(
       entry.description,
     ).toPlainText();
-    final List<String> words = descriptionText.trim().split(RegExp(r'\s+'));
-    final String title =
-        words.take(4).join(' ') + (words.length > 4 ? '...' : '');
+
+    // AI Title Logic
+    final String displayTitle = entry.aiTitle ?? 'Loading title...';
+    final bool isAiTitleLoading = entry.aiTitle == null;
 
     return SizedBox(
       width: double.infinity,
@@ -105,12 +106,23 @@ class JournalEntryCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Expanded(
-                            child: Text(
-                              title,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  displayTitle,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                if (isAiTitleLoading)
+                                  const SizedBox(
+                                    height: 2,
+                                    width: 50,
+                                    child: LinearProgressIndicator(),
+                                  ),
+                              ],
                             ),
                           ),
                         ],
@@ -118,7 +130,7 @@ class JournalEntryCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         descriptionText,
-                        maxLines: 3,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],

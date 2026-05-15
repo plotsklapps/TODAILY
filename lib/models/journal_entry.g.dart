@@ -24,13 +24,14 @@ class JournalEntryAdapter extends TypeAdapter<JournalEntry> {
       tags: fields[4] == null
           ? const <String>[]
           : (fields[4] as List).cast<String>(),
+      aiTitle: fields[5] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, JournalEntry obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.dateKey)
       ..writeByte(1)
@@ -40,7 +41,9 @@ class JournalEntryAdapter extends TypeAdapter<JournalEntry> {
       ..writeByte(3)
       ..write(obj.emojis)
       ..writeByte(4)
-      ..write(obj.tags);
+      ..write(obj.tags)
+      ..writeByte(5)
+      ..write(obj.aiTitle);
   }
 
   @override

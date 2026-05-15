@@ -32,6 +32,7 @@ class MainEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Wrapper for context-free snackbars.
     return ToastificationWrapper(
       child: MaterialApp(
         title: 'todaily',

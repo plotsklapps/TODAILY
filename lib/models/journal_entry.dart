@@ -10,6 +10,7 @@ class JournalEntry extends HiveObject {
     required this.imagePaths,
     required this.emojis,
     this.tags = const <String>[],
+    this.aiTitle,
   });
 
   @HiveField(0)
@@ -26,4 +27,7 @@ class JournalEntry extends HiveObject {
 
   @HiveField(4)
   final List<String> tags;
+
+  @HiveField(5)
+  final String? aiTitle;
 }
