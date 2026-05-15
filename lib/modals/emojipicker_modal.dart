@@ -22,7 +22,9 @@ class EmojiPickerModal extends StatefulWidget {
   final VoidCallback onNext;
 
   @override
-  State<EmojiPickerModal> createState() => _EmojiPickerModalState();
+  State<EmojiPickerModal> createState() {
+    return _EmojiPickerModalState();
+  }
 }
 
 class _EmojiPickerModalState extends State<EmojiPickerModal> {

@@ -6,6 +6,10 @@ class IconLibrary {
     icon: HugeIcons.strokeRoundedMenu01,
   );
 
+  static Widget iconSettings = const HugeIcon(
+    icon: HugeIcons.strokeRoundedSettings01,
+  );
+
   static Widget iconPlus = const HugeIcon(
     icon: HugeIcons.strokeRoundedPlusSignCircle,
   );
@@ -20,6 +24,10 @@ class IconLibrary {
 
   static Widget iconBack = const HugeIcon(
     icon: HugeIcons.strokeRoundedArrowLeft01,
+  );
+
+  static Widget iconNext = const HugeIcon(
+    icon: HugeIcons.strokeRoundedArrowRight01,
   );
 
   static Widget iconCheck = const HugeIcon(
@@ -44,5 +52,13 @@ class IconLibrary {
 
   static Widget iconCamera = const HugeIcon(
     icon: HugeIcons.strokeRoundedCameraAdd01,
+  );
+
+  static Widget iconEyeOpen = const HugeIcon(
+    icon: HugeIcons.strokeRoundedView,
+  );
+
+  static Widget iconEyeShut = const HugeIcon(
+    icon: HugeIcons.strokeRoundedViewOffSlash,
   );
 }

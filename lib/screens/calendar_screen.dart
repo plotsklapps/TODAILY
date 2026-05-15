@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:signals/signals_flutter.dart';
+import 'package:todaily/modals/menu_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/journaleditor_screen.dart';
-import 'package:todaily/screens/settings_screen.dart';
+import 'package:todaily/services/modal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 import 'package:todaily/widgets/journalentrycard_widget.dart';
 
@@ -63,21 +64,6 @@ class _CalendarScreenState extends State<CalendarScreen>
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) {
-                    return const SettingsScreen();
-                  },
-                ),
-              );
-            },
-          ),
-        ],
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -204,7 +190,13 @@ class _CalendarScreenState extends State<CalendarScreen>
         child: Row(
           children: <Widget>[
             IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                await ModalService.showModal(
+                  context: context,
+                  child: const MenuModal(),
+                  title: 'Menu',
+                );
+              },
               icon: IconLibrary.iconMenu,
             ),
           ],
