@@ -34,7 +34,7 @@ class AIService {
   static Future<String> generateTitle(String description) async {
     const String prompt =
         'Write a descriptive title for this journal entry. '
-        'Output ONLY the title, 3-4 words max, no other text.';
+        'Output ONLY the title, 3-10 words max, no other text.';
 
     // Pass the description as part of the prompt
     return generateText('$prompt\n\n$description');

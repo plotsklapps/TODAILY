@@ -34,7 +34,6 @@ class JournalImagesRow extends StatelessWidget {
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
-      mainAxisSize: MainAxisSize.min,
       children: images.map((String path) {
         return Padding(
           padding: EdgeInsets.only(right: images.last == path ? 0 : 4),
@@ -42,7 +41,7 @@ class JournalImagesRow extends StatelessWidget {
             width: imageWidth,
             height: 80,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(12),
               child: Image.file(
                 File(path),
                 fit: BoxFit.cover,

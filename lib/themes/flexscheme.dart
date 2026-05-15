@@ -42,13 +42,10 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
 
   if (sDarkMode.value) {
     return FlexThemeData.dark(
-      // Using FlexColorScheme built-in FlexScheme enum based colors.
       scheme: activeScheme,
-      // None seed generated ColorScheme style of Fixed colors.
       fixedColorStyle: FlexFixedColorStyle.computed,
-      // Convenience direct styling properties.
+      surfaceMode: FlexSurfaceMode.highBackgroundLowScaffold,
       tabBarStyle: FlexTabBarStyle.forAppBar,
-      // Component themes configurations for dark mode.
       subThemesData: const FlexSubThemesData(
         interactionEffects: true,
         tintedDisabledControls: true,
@@ -217,21 +214,21 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
     );
   } else {
     return FlexThemeData.light(
-      // Using FlexColorScheme built-in FlexScheme enum based colors
       scheme: activeScheme,
-      // None seed generated ColorScheme style of Fixed colors.
       fixedColorStyle: FlexFixedColorStyle.computed,
-      // Convenience direct styling properties.
+      surfaceMode: FlexSurfaceMode.highBackgroundLowScaffold,
       tabBarStyle: FlexTabBarStyle.forAppBar,
-      // Component themes configurations for light mode.
       subThemesData: const FlexSubThemesData(
         interactionEffects: true,
         tintedDisabledControls: true,
+        blendOnColors: true,
         useMaterial3Typography: true,
         thinBorderWidth: 1,
         thickBorderWidth: 2,
+        switchThumbFixedSize: true,
+
         splashType: FlexSplashType.inkSplash,
-        defaultRadius: 8,
+        defaultRadius: 24,
         filledButtonSchemeColor: SchemeColor.secondary,
         elevatedButtonSchemeColor: SchemeColor.secondary,
         outlinedButtonSchemeColor: SchemeColor.secondary,
@@ -303,6 +300,7 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
         listTileMinVerticalPadding: 6,
         fabSchemeColor: SchemeColor.primaryContainer,
         fabForegroundSchemeColor: SchemeColor.onPrimaryContainer,
+        fabUseShape: true,
         chipSchemeColor: SchemeColor.surface,
         chipSelectedSchemeColor: SchemeColor.secondary,
         chipSecondarySelectedSchemeColor: SchemeColor.secondary,
@@ -319,9 +317,9 @@ final Computed<ThemeData> cThemeData = Computed<ThemeData>(() {
         datePickerHeaderBackgroundSchemeColor: SchemeColor.surfaceContainerHigh,
         datePickerHeaderForegroundSchemeColor: SchemeColor.onSurfaceVariant,
         datePickerDividerSchemeColor: SchemeColor.secondary,
-        snackBarRadius: 8,
+        snackBarRadius: 24,
         snackBarActionSchemeColor: SchemeColor.inversePrimary,
-        bottomAppBarHeight: 76,
+        bottomAppBarHeight: 64,
         tabBarIndicatorSize: TabBarIndicatorSize.label,
         tabBarIndicatorWeight: 4,
         tabBarIndicatorTopRadius: 8,

@@ -223,8 +223,23 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                       try {
                         final String journalText = _controller.document
                             .toPlainText();
-                        final String generatedTitle =
-                            await AIService.generateTitle(journalText);
+
+                        // Check if API key exists.
+                        final String? apiKey = await AIService.getApiKey();
+                        String generatedTitle;
+
+                        if (apiKey != null && apiKey.isNotEmpty) {
+                          generatedTitle = await AIService.generateTitle(
+                            journalText,
+                          );
+                        } else {
+                          // Fallback: first 5 words of the description.
+                          final List<String> words = journalText.trim().split(
+                            RegExp(r'\s+'),
+                          );
+                          generatedTitle = words.take(5).join(' ');
+                          if (words.length > 5) generatedTitle += '...';
+                        }
 
                         // Update the entry with the generated title.
                         final JournalEntry updatedEntry = JournalEntry(
@@ -233,15 +248,18 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                           emojis: entry.emojis,
                           imagePaths: entry.imagePaths,
                           aiTitle: generatedTitle,
+                          tags: entry.tags,
                         );
                         await JournalService.updateJournal(updatedEntry);
                       } catch (e) {
+                        // Final fallback if generation fails for other reasons.
                         final JournalEntry fallbackEntry = JournalEntry(
                           dateKey: _dateKey,
                           description: entry.description,
                           emojis: entry.emojis,
                           imagePaths: entry.imagePaths,
                           aiTitle: 'My Todaily', // Fallback
+                          tags: entry.tags,
                         );
                         await JournalService.updateJournal(fallbackEntry);
                       }
