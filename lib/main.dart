@@ -1,15 +1,26 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:toastification/toastification.dart';
+import 'package:todaily/firebase_options.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/calendar_screen.dart';
 import 'package:todaily/themes/flexscheme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase for AI purposes.
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Initialize Hive.
   await Hive.initFlutter();
+
+  // Open Hive boxes.
   Hive.registerAdapter(JournalEntryAdapter());
   await Hive.openBox<JournalEntry>('journals');
 

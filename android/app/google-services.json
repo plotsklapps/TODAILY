@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "70198882080",
+    "project_id": "todailyapp",
+    "storage_bucket": "todailyapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70198882080:android:9551ba1fd6405587f97145",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70198882080-6i271ha2cjuuptdait1rultbpmu1idha.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoJm-dpFxsC1si-FbVemAHdSQrHtiisMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70198882080-6i271ha2cjuuptdait1rultbpmu1idha.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "70198882080-4t13mjs31hih54kphq157p59ult1vikd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "dev.plotsklapps.todaily"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70198882080:android:50f68347ee32890ef97145",
+        "android_client_info": {
+          "package_name": "dev.plotsklapps.todaily"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70198882080-6i271ha2cjuuptdait1rultbpmu1idha.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoJm-dpFxsC1si-FbVemAHdSQrHtiisMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70198882080-6i271ha2cjuuptdait1rultbpmu1idha.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "70198882080-4t13mjs31hih54kphq157p59ult1vikd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "dev.plotsklapps.todaily"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
