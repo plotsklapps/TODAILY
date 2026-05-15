@@ -5,6 +5,7 @@ import 'package:signals/signals_flutter.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/journaleditor_screen.dart';
 import 'package:todaily/themes/iconlibrary.dart';
+import 'package:todaily/widgets/journalentrycard_widget.dart';
 
 final Signal<List<JournalEntry>> journalBoxSignal = Signal<List<JournalEntry>>(
   Hive.box<JournalEntry>('journals').values.toList(),
@@ -152,33 +153,19 @@ class _CalendarScreenState extends State<CalendarScreen>
           return ListView.builder(
             itemCount: monthEntries.length,
             itemBuilder: (_, int index) {
-              final JournalEntry entry = monthEntries[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: ListTile(
-                  title: Text(entry.dateKey),
-                  subtitle: Text(
-                    entry.description.toString(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (_) {
-                          return JournalEditorScreen(
-                            date: DateTime.parse(entry.dateKey),
-                          );
-                        },
-                      ),
+              // Sort by date descending (most recent first)
+              final List<JournalEntry> sortedEntries =
+                  List<JournalEntry>.from(
+                    monthEntries,
+                  )..sort((a, b) {
+                    return DateTime.parse(b.dateKey).compareTo(
+                      DateTime.parse(a.dateKey),
                     );
-                  },
-                ),
-              );
+                  });
+
+              final JournalEntry entry = sortedEntries[index];
+
+              return JournalEntryCard(entry: entry);
             },
           );
         }),
