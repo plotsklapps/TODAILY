@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:todaily/modals/emojipicker_modal.dart';
 import 'package:todaily/modals/imagepicker_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
+import 'package:todaily/services/format_service.dart';
 import 'package:todaily/services/journal_service.dart';
 import 'package:todaily/services/modal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
@@ -24,6 +25,7 @@ class JournalEditorScreen extends StatefulWidget {
 }
 
 class _JournalEditorScreenState extends State<JournalEditorScreen> {
+  late final String _dateKey;
   late final QuillController _controller;
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
@@ -31,20 +33,32 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
   @override
   void initState() {
     super.initState();
-    final String dateKey = JournalService.getDateKey(widget.date);
-    final JournalEntry? entry = JournalService.readJournal(dateKey);
+    // Fetch dateKey (yyyyMMdd) for use throughout file.
+    _dateKey = JournalService.getDateKey(widget.date);
+
+    // Fetch possibly existing Journal.
+    final JournalEntry? entry = JournalService.readJournal(_dateKey);
 
     if (entry != null) {
+      // Fetch previously entered Journal.
       _controller = QuillController(
         document: Document.fromDelta(Delta.fromJson(entry.description)),
         selection: const TextSelection.collapsed(offset: 0),
       );
+
+      // Fetch previously entered emoji's/images.
       sSelectedEmojis.value = List<String>.from(entry.emojis);
+      sSelectedImages.value = List<String>.from(entry.imagePaths);
     } else {
+      // Show empty textfield.
       _controller = QuillController.basic();
+
+      // Create empty Signals for emoji's/images.
       sSelectedEmojis.value = <String>[];
+      sSelectedImages.value = <String>[];
     }
 
+    // Show cursor directly after initialization.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
@@ -52,40 +66,34 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
 
   @override
   void dispose() {
+    // Kill all controllers.
     _controller.dispose();
     _focusNode.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
-  String _getOrdinal(int day) {
-    if (day >= 11 && day <= 13) return 'th';
-    switch (day % 10) {
-      case 1:
-        return 'st';
-      case 2:
-        return 'nd';
-      case 3:
-        return 'rd';
-      default:
-        return 'th';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    final double safeAreaBottom = MediaQuery.of(context).padding.bottom;
 
-    // We add 80 to account for FAB + some padding
-    final double totalBottomInset = keyboardHeight + 80;
+    // Dynamically calculate space needed at bottom to make text scroll
+    // above saveFAB instead of behind it.
+    const double bottomBarHeight = 80;
+    const double fabOverlap = 32;
+
+    final double dynamicPadding = safeAreaBottom + bottomBarHeight + fabOverlap;
+    final double totalBottomInset =
+        keyboardHeight + safeAreaBottom + bottomBarHeight;
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
           DateFormat(
-            "yyyy, MMMM d'${_getOrdinal(widget.date.day)}'",
+            "yyyy, MMMM d'${FormatService.getOrdinal(widget.date.day)}'",
           ).format(widget.date),
           style: theme.textTheme.titleLarge!.copyWith(
             fontWeight: FontWeight.bold,
@@ -150,9 +158,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                 scrollController: _scrollController,
                 focusNode: _focusNode,
                 config: QuillEditorConfig(
-                  // Combination of padding and scrollBottomInset to make
-                  // text scroll above FAB instead of behind it.
-                  padding: const EdgeInsets.only(bottom: 100),
+                  padding: EdgeInsets.only(bottom: dynamicPadding),
                   scrollBottomInset: totalBottomInset,
                   placeholder: '...',
                 ),
@@ -170,9 +176,6 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
 
           if (!context.mounted) return;
 
-          // Get dateKey for Hive storage.
-          final String dateKey = JournalService.getDateKey(widget.date);
-
           await ModalService.showModal(
             context: context,
             title: 'Select 1-3 emojis',
@@ -186,13 +189,10 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                   context: context,
                   title: 'Add up to 6 images',
                   child: ImagePickerModal(
-                    initialImages:
-                        JournalService.readJournal(dateKey)?.imagePaths ??
-                        const <String>[],
                     onSave: (List<String> images) async {
                       // Create/Update a JournalEntry Object.
                       final JournalEntry entry = JournalEntry(
-                        dateKey: dateKey,
+                        dateKey: _dateKey,
                         description: _controller.document.toDelta().toJson(),
                         emojis: sSelectedEmojis.value,
                         imagePaths: images,
@@ -200,7 +200,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
 
                       // Use JournalService to save the entry.
                       final JournalEntry? existing = JournalService.readJournal(
-                        dateKey,
+                        _dateKey,
                       );
                       if (existing != null) {
                         await JournalService.updateJournal(entry);

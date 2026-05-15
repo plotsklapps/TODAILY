@@ -2,8 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:signals/signals_flutter.dart';
 import 'package:todaily/services/toast_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
+
+final Signal<List<String>> sSelectedImages = Signal<List<String>>(
+  <String>[],
+  debugLabel: 'sSelectedImages',
+);
 
 class ImagePickerModal extends StatefulWidget {
   const ImagePickerModal({
@@ -19,11 +25,16 @@ class ImagePickerModal extends StatefulWidget {
 }
 
 class _ImagePickerModalState extends State<ImagePickerModal> {
-  late final List<String> _imagePaths = List<String>.from(widget.initialImages);
   final ImagePicker _picker = ImagePicker();
 
+  @override
+  void initState() {
+    super.initState();
+    sSelectedImages.value = List<String>.from(widget.initialImages);
+  }
+
   Future<void> _pickImage(ImageSource source) async {
-    if (_imagePaths.length >= 6) {
+    if (sSelectedImages.value.length >= 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Maximum 6 images allowed')),
       );
@@ -31,14 +42,15 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
     }
     final XFile? pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
-      setState(() {
-        _imagePaths.add(pickedFile.path);
-      });
+      final List<String> current = List<String>.from(sSelectedImages.value);
+      current.add(pickedFile.path);
+      sSelectedImages.value = current;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<String> imagePaths = sSelectedImages.watch(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -60,6 +72,7 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
             ),
             const SizedBox(width: 16),
             FloatingActionButton.extended(
+              heroTag: 'cameraFAB',
               onPressed: () async {
                 await _pickImage(ImageSource.camera);
               },
@@ -77,7 +90,7 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: _imagePaths.length,
+          itemCount: imagePaths.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             mainAxisSpacing: 8,
@@ -87,7 +100,7 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
             return Stack(
               children: <Widget>[
                 Image.file(
-                  File(_imagePaths[index]),
+                  File(imagePaths[index]),
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: double.infinity,
@@ -98,9 +111,11 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
                   child: IconButton(
                     icon: const Icon(Icons.remove_circle, color: Colors.red),
                     onPressed: () {
-                      setState(() {
-                        _imagePaths.removeAt(index);
-                      });
+                      final List<String> current = List<String>.from(
+                        sSelectedImages.value,
+                      );
+                      current.removeAt(index);
+                      sSelectedImages.value = current;
                     },
                   ),
                 ),
@@ -114,7 +129,7 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
             Expanded(
               child: FilledButton(
                 onPressed: () {
-                  if (_imagePaths.isEmpty) {
+                  if (imagePaths.isEmpty) {
                     ToastService.showWarning(
                       title: 'Select an Image',
                       subtitle:
@@ -123,7 +138,7 @@ class _ImagePickerModalState extends State<ImagePickerModal> {
                     );
                     return;
                   } else {
-                    widget.onSave(_imagePaths);
+                    widget.onSave(imagePaths);
                   }
                 },
                 child: const Text('Save Journal Entry'),
