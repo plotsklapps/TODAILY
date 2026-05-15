@@ -157,7 +157,7 @@ class _CalendarScreenState extends State<CalendarScreen>
               final List<JournalEntry> sortedEntries =
                   List<JournalEntry>.from(
                     monthEntries,
-                  )..sort((a, b) {
+                  )..sort((JournalEntry a, JournalEntry b) {
                     return DateTime.parse(b.dateKey).compareTo(
                       DateTime.parse(a.dateKey),
                     );
