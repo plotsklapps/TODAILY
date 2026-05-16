@@ -10,6 +10,10 @@ class IconLibrary {
     icon: HugeIcons.strokeRoundedSettings01,
   );
 
+  static Widget iconCloud = const HugeIcon(
+    icon: HugeIcons.strokeRoundedCloud,
+  );
+
   static Widget iconPlus = const HugeIcon(
     icon: HugeIcons.strokeRoundedPlusSignCircle,
   );
@@ -60,5 +64,9 @@ class IconLibrary {
 
   static Widget iconEyeShut = const HugeIcon(
     icon: HugeIcons.strokeRoundedViewOffSlash,
+  );
+
+  static Widget iconInifity = const HugeIcon(
+    icon: HugeIcons.strokeRoundedInfinity01,
   );
 }

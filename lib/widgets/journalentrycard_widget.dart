@@ -46,6 +46,7 @@ class JournalEntryCard extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -95,6 +96,7 @@ class JournalEntryCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      textAlign: TextAlign.start,
                     ),
                     if (isAiTitleLoading)
                       const SizedBox(
@@ -107,6 +109,7 @@ class JournalEntryCard extends StatelessWidget {
                       descriptionText,
                       maxLines: 5,
                       overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
                     ),
                     const Divider(),
                     JournalImagesRow(
