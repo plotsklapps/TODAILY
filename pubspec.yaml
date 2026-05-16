@@ -42,7 +42,7 @@ flutter_native_splash:
   # dart run flutter_native_splash:create
   color: "#dedede"
   color_dark: "#dedede"
-  image: assets/icons/todailyIcon.png
+  image: assets/icons/todailyIconSplash.png
   android_gravity: center
   ios_content_mode: center
   web_image_mode: center
@@ -50,11 +50,10 @@ flutter_native_splash:
   fullscreen: true
   # ANDROID 12+ configuration:
   android_12:
-    # background color
     color: "#dedede"
     color_dark: "#dedede"
-    image: assets/icons/todailyIcon.png
-    image_dark: assets/icons/todailyIcon.png
+    image: assets/icons/todailyIconSplash.png
+    image_dark: assets/icons/todailyIconSplash.png
     icon_background_color: "#dedede"
     icon_background_color_dark: "#dedede"
 

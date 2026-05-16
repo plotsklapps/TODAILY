@@ -41,7 +41,7 @@ class JournalImagesRow extends StatelessWidget {
             width: imageWidth,
             height: 80,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(4),
               child: Image.file(
                 File(path),
                 fit: BoxFit.cover,

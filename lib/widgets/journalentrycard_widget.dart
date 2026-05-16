@@ -41,7 +41,7 @@ class JournalEntryCard extends StatelessWidget {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(8),
           child: Row(
             children: <Widget>[
               Expanded(
