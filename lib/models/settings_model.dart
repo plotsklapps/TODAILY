@@ -18,7 +18,7 @@ class Settings extends HiveObject {
   @HiveField(1, defaultValue: false)
   final bool darkMode;
 
-  @HiveField(2, defaultValue: 'shark')
+  @HiveField(2, defaultValue: '')
   final String flexSchemeName;
 
   @HiveField(3, defaultValue: 'Questrial')

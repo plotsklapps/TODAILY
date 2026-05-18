@@ -19,10 +19,10 @@ class SettingsService {
       sFont.value = settings.font;
     } else {
       // Set defaults
-      sWakelock.value = true;
+      sWakelock.value = false;
       sDarkMode.value = false;
-      sFlexScheme.value = FlexScheme.material;
-      sFont.value = 'Roboto';
+      sFlexScheme.value = FlexScheme.shark;
+      sFont.value = 'Questrial';
     }
 
     // Apply initial wakelock
