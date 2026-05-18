@@ -85,10 +85,10 @@ class _WordCloudScreenState extends State<WordCloudScreen> {
               spacing: 10,
               children: topWords.map((MapEntry<String, int> entry) {
                 final double size =
-                    20 +
-                    (entry.value.toDouble() * 4.0).clamp(
+                    24 +
+                    (entry.value.toDouble() * 5.0).clamp(
                       0,
-                      64,
+                      72,
                     );
                 final bool rotate = entry.key.length % 3 == 0;
 

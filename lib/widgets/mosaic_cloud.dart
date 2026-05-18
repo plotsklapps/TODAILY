@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class MosaicCloud extends MultiChildRenderObjectWidget {
+  const MosaicCloud({
+    required super.children,
+    super.key,
+    this.spacing = 4.0,
+  });
   final double spacing;
-
-  const MosaicCloud({super.key, required super.children, this.spacing = 4.0});
 
   @override
   RenderObject createRenderObject(BuildContext context) {
@@ -28,11 +31,12 @@ class RenderMosaicCloudBox extends RenderBox
     with
         ContainerRenderObjectMixin<RenderBox, _MosaicCloudParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, _MosaicCloudParentData> {
+  RenderMosaicCloudBox({required double spacing}) : _spacing = spacing;
   double _spacing;
 
-  RenderMosaicCloudBox({required double spacing}) : _spacing = spacing;
-
-  double get spacing => _spacing;
+  double get spacing {
+    return _spacing;
+  }
 
   set spacing(double value) {
     if (_spacing == value) return;
@@ -54,17 +58,18 @@ class RenderMosaicCloudBox extends RenderBox
       return;
     }
 
-    final List<Rect> calculatedRects = [];
+    final List<Rect> calculatedRects = <Rect>[];
     RenderBox? child = firstChild;
-    final List<RenderBox> children = [];
+    final List<RenderBox> children = <RenderBox>[];
 
     // Layout children with loose constraints to get their preferred sizes
     while (child != null) {
-      final childParentData = child.parentData as _MosaicCloudParentData;
+      final _MosaicCloudParentData childParentData =
+          child.parentData! as _MosaicCloudParentData;
       children.add(child);
 
       child.layout(const BoxConstraints(), parentUsesSize: true);
-      final childSize = child.size;
+      final Size childSize = child.size;
 
       Rect childRect;
       if (calculatedRects.isEmpty) {
@@ -76,9 +81,13 @@ class RenderMosaicCloudBox extends RenderBox
       child = childParentData.nextSibling;
     }
 
-    Rect boundingBox = calculatedRects.reduce((a, b) => a.expandToInclude(b));
+    final Rect boundingBox = calculatedRects.reduce(
+      (Rect a, Rect b) {
+        return a.expandToInclude(b);
+      },
+    );
 
-    double scale = 1.0;
+    double scale = 1;
     if (boundingBox.width > constraints.maxWidth) {
       scale = constraints.maxWidth / boundingBox.width;
     }
@@ -86,13 +95,14 @@ class RenderMosaicCloudBox extends RenderBox
       scale = constraints.maxHeight / boundingBox.height;
     }
 
-    final Matrix4 transform = Matrix4.identity()..scale(scale, scale);
+    final Matrix4 transform = Matrix4.diagonal3Values(scale, scale, 1);
 
     final Offset offsetToOrigin = -boundingBox.topLeft;
 
     for (int i = 0; i < children.length; i++) {
-      final childParentData = children[i].parentData as _MosaicCloudParentData;
-      final initialOffset = calculatedRects[i].topLeft + offsetToOrigin;
+      final _MosaicCloudParentData childParentData =
+          children[i].parentData! as _MosaicCloudParentData;
+      final Offset initialOffset = calculatedRects[i].topLeft + offsetToOrigin;
       childParentData.offset = MatrixUtils.transformPoint(
         transform,
         initialOffset,
@@ -109,24 +119,24 @@ class RenderMosaicCloudBox extends RenderBox
 
   Rect _findNextPosition(Size childSize, List<Rect> placedRects) {
     const double angleStep = 0.2;
-    double step = 10.0;
-    double angle = 0.0;
+    const double step = 10;
+    double angle = 0;
     double distance = step;
     int turns = 0;
 
     while (true) {
-      final point =
+      final Offset point =
           Offset(distance * cos(angle), distance * sin(angle)) +
           placedRects.first.center;
 
-      final candidateRect = Rect.fromCenter(
+      final Rect candidateRect = Rect.fromCenter(
         center: point,
         width: childSize.width,
         height: childSize.height,
       );
 
       bool intersects = false;
-      for (final rect in placedRects) {
+      for (final Rect rect in placedRects) {
         if (candidateRect.overlaps(rect.inflate(spacing))) {
           intersects = true;
           break;
