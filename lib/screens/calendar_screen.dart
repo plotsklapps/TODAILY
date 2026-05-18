@@ -58,13 +58,7 @@ class _CalendarScreenState extends State<CalendarScreen>
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: Text(
-          'todaily $currentYear',
-          style: theme.textTheme.titleLarge!.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        bottom: TabBar(
+        title: TabBar(
           controller: _tabController,
           isScrollable: true,
           tabAlignment: TabAlignment.center,
@@ -172,7 +166,7 @@ class _CalendarScreenState extends State<CalendarScreen>
           );
         }),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
       floatingActionButton: FloatingActionButton(
         child: IconLibrary.iconPlus,
         onPressed: () async {
@@ -188,6 +182,7 @@ class _CalendarScreenState extends State<CalendarScreen>
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             IconButton(
               onPressed: () async {
@@ -199,6 +194,19 @@ class _CalendarScreenState extends State<CalendarScreen>
               },
               icon: IconLibrary.iconMenu,
             ),
+            Column(
+              children: [
+                Text(
+                  'todaily',
+                  style: theme.textTheme.displaySmall!.copyWith(fontSize: 26),
+                ),
+                Text(
+                  '2026',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            ),
+            const SizedBox(width: 48),
           ],
         ),
       ),
