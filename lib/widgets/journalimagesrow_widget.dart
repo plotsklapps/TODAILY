@@ -27,7 +27,8 @@ class JournalImagesRow extends StatelessWidget {
 
     // Calculate width per image: (AvailableWidth - TotalSpacing) / Count
     // We cap it at 60px (instead of 120px) to make them narrower.
-    // Also, we adjust the available width logic if needed, but reducing the cap is the most direct way.
+    // Also, we adjust the available width logic if needed, but reducing
+    // the cap is the most direct way.
     final double imageWidth = ((screenWidth - 64 - totalSpacing) / count).clamp(
       0.0,
       60.0,

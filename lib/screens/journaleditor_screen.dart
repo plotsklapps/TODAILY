@@ -198,8 +198,6 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                         description: _controller.document.toDelta().toJson(),
                         emojis: sSelectedEmojis.value,
                         imagePaths: images,
-                        aiTitle:
-                            null, // Title is null, signaling it's being generated.
                       );
 
                       // Use JournalService to save the entry.
@@ -251,7 +249,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                           tags: entry.tags,
                         );
                         await journalService.updateJournal(updatedEntry);
-                      } catch (e) {
+                      } on Exception catch (_) {
                         // Final fallback if generation fails for other reasons.
                         final JournalEntry fallbackEntry = JournalEntry(
                           dateKey: _dateKey,

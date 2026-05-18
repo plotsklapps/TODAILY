@@ -17,10 +17,10 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Settings(
-      wakelock: fields[0] as bool,
-      darkMode: fields[1] as bool,
-      flexSchemeIndex: (fields[2] as num).toInt(),
-      font: fields[3] as String,
+      wakelock: fields[0] == null ? false : fields[0] as bool,
+      darkMode: fields[1] == null ? false : fields[1] as bool,
+      flexSchemeName: fields[2] == null ? 'shark' : fields[2] as String,
+      font: fields[3] == null ? 'Questrial' : fields[3] as String,
     );
   }
 
@@ -33,7 +33,7 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(1)
       ..write(obj.darkMode)
       ..writeByte(2)
-      ..write(obj.flexSchemeIndex)
+      ..write(obj.flexSchemeName)
       ..writeByte(3)
       ..write(obj.font);
   }

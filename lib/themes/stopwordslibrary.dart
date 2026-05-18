@@ -1,7 +1,7 @@
 import 'package:signals/signals.dart';
 
 // Very large list of common English stopwords
-final Signal<List<String>> stopwords = signal<List<String>>([
+final Signal<List<String>> stopwords = signal<List<String>>(<String>[
   'a',
   'about',
   'above',

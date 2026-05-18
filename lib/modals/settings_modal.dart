@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:todaily/services/ai_service.dart';
 import 'package:todaily/services/toast_service.dart';
@@ -20,7 +22,7 @@ class _AIModalState extends State<AIModal> {
   @override
   void initState() {
     super.initState();
-    _loadKey();
+    unawaited(_loadKey());
   }
 
   Future<void> _loadKey() async {

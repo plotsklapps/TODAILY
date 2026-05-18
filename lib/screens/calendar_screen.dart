@@ -195,7 +195,7 @@ class _CalendarScreenState extends State<CalendarScreen>
               icon: IconLibrary.iconMenu,
             ),
             Column(
-              children: [
+              children: <Widget>[
                 Text(
                   'todaily',
                   style: theme.textTheme.displaySmall!.copyWith(fontSize: 26),

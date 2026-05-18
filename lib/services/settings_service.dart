@@ -37,7 +37,7 @@ class SettingsService {
     final Settings settings = Settings(
       wakelock: sWakelock.value,
       darkMode: sDarkMode.value,
-      flexSchemeIndex: sFlexScheme.value.index,
+      flexSchemeName: sFlexScheme.value.name,
       font: sFont.value,
     );
     await _settingsBox.put('settings', settings);

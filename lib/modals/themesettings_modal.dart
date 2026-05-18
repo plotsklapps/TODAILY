@@ -108,7 +108,7 @@ class ThemeSettingsModal extends StatelessWidget {
                   segments: <ButtonSegment<String>>[
                     ButtonSegment<String>(
                       value: 'Questrial',
-                      label: Text('Questrial'),
+                      label: const Text('Questrial'),
                       icon: IconLibrary.iconFont,
                     ),
                     ButtonSegment<String>(
