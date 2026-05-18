@@ -39,7 +39,7 @@ class JournalImagesRow extends StatelessWidget {
           padding: EdgeInsets.only(right: images.last == path ? 0 : 4),
           child: SizedBox(
             width: imageWidth,
-            height: 80,
+            height: 32,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: Image.file(
