@@ -35,10 +35,10 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
   void initState() {
     super.initState();
     // Fetch dateKey (yyyyMMdd) for use throughout file.
-    _dateKey = JournalService.getDateKey(widget.date);
+    _dateKey = journalService.getDateKey(widget.date);
 
     // Fetch possibly existing Journal.
-    final JournalEntry? entry = JournalService.readJournal(_dateKey);
+    final JournalEntry? entry = journalService.readJournal(_dateKey);
 
     if (entry != null) {
       // Fetch previously entered Journal.
@@ -203,13 +203,13 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                       );
 
                       // Use JournalService to save the entry.
-                      final JournalEntry? existing = JournalService.readJournal(
+                      final JournalEntry? existing = journalService.readJournal(
                         _dateKey,
                       );
                       if (existing != null) {
-                        await JournalService.updateJournal(entry);
+                        await journalService.updateJournal(entry);
                       } else {
-                        await JournalService.createJournal(entry);
+                        await journalService.createJournal(entry);
                       }
 
                       // Pop all sheets and return to CalendarScreen.
@@ -250,7 +250,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                           aiTitle: generatedTitle,
                           tags: entry.tags,
                         );
-                        await JournalService.updateJournal(updatedEntry);
+                        await journalService.updateJournal(updatedEntry);
                       } catch (e) {
                         // Final fallback if generation fails for other reasons.
                         final JournalEntry fallbackEntry = JournalEntry(
@@ -261,7 +261,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                           aiTitle: 'My Todaily', // Fallback
                           tags: entry.tags,
                         );
-                        await JournalService.updateJournal(fallbackEntry);
+                        await journalService.updateJournal(fallbackEntry);
                       }
                     },
                   ),

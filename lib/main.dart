@@ -6,7 +6,10 @@ import 'package:signals/signals_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'package:todaily/firebase_options.dart';
 import 'package:todaily/models/journal_entry.dart';
+import 'package:todaily/models/settings_model.dart';
 import 'package:todaily/screens/calendar_screen.dart';
+import 'package:todaily/services/journal_service.dart';
+import 'package:todaily/services/settings_service.dart';
 import 'package:todaily/themes/flexscheme.dart';
 
 void main() async {
@@ -21,8 +24,12 @@ void main() async {
   await Hive.initFlutter();
 
   // Open Hive boxes.
-  Hive.registerAdapter(JournalEntryAdapter());
-  await Hive.openBox<JournalEntry>('journals');
+  Hive
+    ..registerAdapter(JournalEntryAdapter())
+    ..registerAdapter(SettingsAdapter());
+
+  await journalService.init();
+  await settingsService.init();
 
   runApp(const MainEntry());
 }

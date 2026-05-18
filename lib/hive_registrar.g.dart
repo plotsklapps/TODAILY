@@ -4,15 +4,18 @@
 
 import 'package:hive_ce/hive_ce.dart';
 import 'package:todaily/models/journal_entry.dart';
+import 'package:todaily/models/settings_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(JournalEntryAdapter());
+    registerAdapter(SettingsAdapter());
   }
 }
 
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(JournalEntryAdapter());
+    registerAdapter(SettingsAdapter());
   }
 }
