@@ -107,11 +107,10 @@ class JournalEntryCard extends StatelessWidget {
 
                     Text(
                       descriptionText,
-                      maxLines: 5,
+                      maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.start,
                     ),
-                    const Divider(),
                     JournalImagesRow(
                       imagePaths: entry.imagePaths,
                     ),

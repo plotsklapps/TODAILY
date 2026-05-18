@@ -3,6 +3,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 import 'package:todaily/themes/stopwordslibrary.dart';
+import 'package:todaily/widgets/mosaic_cloud.dart';
 
 enum TimeRange { last30Days, last3Months, last6Months, lastYear, allTime }
 
@@ -75,28 +76,42 @@ class _WordCloudScreenState extends State<WordCloudScreen> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Center(
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            alignment: WrapAlignment.center,
-            children: topWords.map((MapEntry<String, int> entry) {
-              final double size =
-                  12 + (entry.value.toDouble() * 1.5).clamp(0, 40);
-              return Text(
-                entry.key,
-                style: TextStyle(
-                  fontSize: size,
-                  fontWeight: FontWeight.bold,
-                  color: <Color>[
-                    theme.colorScheme.primary,
-                    theme.colorScheme.secondary,
-                    theme.colorScheme.tertiary,
-                  ][entry.key.length % 3],
-                ),
-              );
-            }).toList(),
+        padding: const EdgeInsets.all(16),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Center(
+            child: MosaicCloud(
+              spacing: 10,
+              children: topWords.map((MapEntry<String, int> entry) {
+                final double size =
+                    20 +
+                    (entry.value.toDouble() * 4.0).clamp(
+                      0,
+                      64,
+                    );
+                final bool rotate = entry.key.length % 3 == 0;
+
+                final Widget wordWidget = Text(
+                  entry.key,
+                  style: TextStyle(
+                    fontSize: size,
+                    fontWeight: FontWeight.bold,
+                    color: <Color>[
+                      theme.colorScheme.primary,
+                      theme.colorScheme.secondary,
+                      theme.colorScheme.tertiary,
+                    ][entry.key.length % 3],
+                  ),
+                );
+
+                return FittedBox(
+                  child: rotate
+                      ? RotatedBox(quarterTurns: 3, child: wordWidget)
+                      : wordWidget,
+                );
+              }).toList(),
+            ),
           ),
         ),
       ),

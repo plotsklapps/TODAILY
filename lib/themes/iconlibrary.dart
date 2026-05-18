@@ -69,4 +69,44 @@ class IconLibrary {
   static Widget iconInifity = const HugeIcon(
     icon: HugeIcons.strokeRoundedInfinity01,
   );
+
+  static Widget iconAIBrain = const HugeIcon(
+    icon: HugeIcons.strokeRoundedAiBrain03,
+  );
+
+  static Widget iconPalette = const HugeIcon(
+    icon: HugeIcons.strokeRoundedPaintBoard,
+  );
+
+  static Widget iconLight = const HugeIcon(
+    icon: HugeIcons.strokeRoundedIdea,
+  );
+
+  static Widget iconDark = const HugeIcon(
+    icon: HugeIcons.strokeRoundedLightbulbOff,
+  );
+
+  static Widget iconSun = const HugeIcon(
+    icon: HugeIcons.strokeRoundedSun03,
+  );
+
+  static Widget iconMoon = const HugeIcon(
+    icon: HugeIcons.strokeRoundedMoon02,
+  );
+
+  static Widget iconOrange = const HugeIcon(
+    icon: HugeIcons.strokeRoundedOrange,
+  );
+
+  static Widget iconPurple = const HugeIcon(
+    icon: HugeIcons.strokeRoundedBlushBrush01,
+  );
+
+  static Widget iconPink = const HugeIcon(
+    icon: HugeIcons.strokeRoundedBabyGirlDress,
+  );
+
+  static Widget iconFont = const HugeIcon(
+    icon: HugeIcons.strokeRoundedTextFont,
+  );
 }

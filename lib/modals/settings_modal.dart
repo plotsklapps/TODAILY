@@ -4,16 +4,16 @@ import 'package:todaily/services/toast_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SettingsModal extends StatefulWidget {
-  const SettingsModal({super.key});
+class AIModal extends StatefulWidget {
+  const AIModal({super.key});
 
   @override
-  State<SettingsModal> createState() {
-    return _SettingsModalState();
+  State<AIModal> createState() {
+    return _AIModalState();
   }
 }
 
-class _SettingsModalState extends State<SettingsModal> {
+class _AIModalState extends State<AIModal> {
   final TextEditingController _apiKeyController = TextEditingController();
   bool _isApiKeyVisible = false;
 
