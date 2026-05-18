@@ -5,7 +5,6 @@ import 'package:signals/signals_flutter.dart';
 import 'package:todaily/modals/menu_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/journaleditor_screen.dart';
-import 'package:todaily/screens/wordcloud_screen.dart';
 import 'package:todaily/services/modal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 import 'package:todaily/widgets/journalentrycard_widget.dart';
@@ -65,21 +64,6 @@ class _CalendarScreenState extends State<CalendarScreen>
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) {
-                    return const WordCloudScreen();
-                  },
-                ),
-              );
-            },
-            icon: IconLibrary.iconCloud,
-          ),
-        ],
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todaily/modals/settings_modal.dart';
 import 'package:todaily/modals/themesettings_modal.dart';
+import 'package:todaily/screens/wordcloud_screen.dart';
 import 'package:todaily/services/modal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 
@@ -35,6 +36,22 @@ class MenuModal extends StatelessWidget {
           leading: IconLibrary.iconPalette,
           title: const Text('THEME SETTINGS'),
           subtitle: const Text('Change app preferences'),
+          trailing: IconLibrary.iconNext,
+        ),
+        ListTile(
+          onTap: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) {
+                  return const WordCloudScreen();
+                },
+              ),
+            );
+          },
+          leading: IconLibrary.iconCloud,
+          title: const Text('WORD CLOUD'),
+          subtitle: const Text('See your most frequent used words'),
           trailing: IconLibrary.iconNext,
         ),
       ],
