@@ -1,5 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:todaily/services/ai_service.dart';
 import 'package:todaily/services/toast_service.dart';
 
 part 'settings_model.g.dart';
@@ -11,7 +12,9 @@ class Settings extends HiveObject {
     required this.darkMode,
     required this.flexSchemeName,
     required this.font,
+    required this.aiProvider,
   });
+
   @HiveField(0, defaultValue: false)
   final bool wakelock;
 
@@ -23,6 +26,9 @@ class Settings extends HiveObject {
 
   @HiveField(3, defaultValue: 'Questrial')
   final String font;
+
+  @HiveField(4, defaultValue: AIProvider.geminiApi)
+  final AIProvider aiProvider;
 
   FlexScheme get flexScheme {
     try {

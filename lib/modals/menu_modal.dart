@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todaily/modals/settings_modal.dart';
+import 'package:todaily/modals/ai_modal.dart';
 import 'package:todaily/modals/themesettings_modal.dart';
 import 'package:todaily/screens/wordcloud_screen.dart';
 import 'package:todaily/services/modal_service.dart';

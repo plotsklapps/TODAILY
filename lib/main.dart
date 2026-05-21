@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gemma/flutter_gemma.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:signals/signals_flutter.dart';
@@ -30,6 +31,11 @@ void main() async {
 
   await journalService.init();
   await settingsService.init();
+
+  const String token = String.fromEnvironment('HUGGINGFACE_TOKEN');
+  await FlutterGemma.initialize(
+    huggingFaceToken: token.isNotEmpty ? token : null,
+  );
 
   runApp(const MainEntry());
 }

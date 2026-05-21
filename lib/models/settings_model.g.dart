@@ -19,15 +19,18 @@ class SettingsAdapter extends TypeAdapter<Settings> {
     return Settings(
       wakelock: fields[0] == null ? false : fields[0] as bool,
       darkMode: fields[1] == null ? false : fields[1] as bool,
-      flexSchemeName: fields[2] == null ? 'shark' : fields[2] as String,
+      flexSchemeName: fields[2] == null ? '' : fields[2] as String,
       font: fields[3] == null ? 'Questrial' : fields[3] as String,
+      aiProvider: fields[4] == null
+          ? AIProvider.geminiApi
+          : fields[4] as AIProvider,
     );
   }
 
   @override
   void write(BinaryWriter writer, Settings obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.wakelock)
       ..writeByte(1)
@@ -35,7 +38,9 @@ class SettingsAdapter extends TypeAdapter<Settings> {
       ..writeByte(2)
       ..write(obj.flexSchemeName)
       ..writeByte(3)
-      ..write(obj.font);
+      ..write(obj.font)
+      ..writeByte(4)
+      ..write(obj.aiProvider);
   }
 
   @override

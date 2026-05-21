@@ -1,6 +1,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:todaily/models/settings_model.dart';
+import 'package:todaily/services/ai_service.dart';
 import 'package:todaily/themes/flexscheme.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -17,12 +18,14 @@ class SettingsService {
       sDarkMode.value = settings.darkMode;
       sFlexScheme.value = settings.flexScheme;
       sFont.value = settings.font;
+      sAIProvider.value = settings.aiProvider;
     } else {
       // Set defaults
       sWakelock.value = false;
       sDarkMode.value = false;
       sFlexScheme.value = FlexScheme.shark;
       sFont.value = 'Questrial';
+      sAIProvider.value = AIProvider.geminiApi;
     }
 
     // Apply initial wakelock
@@ -39,6 +42,7 @@ class SettingsService {
       darkMode: sDarkMode.value,
       flexSchemeName: sFlexScheme.value.name,
       font: sFont.value,
+      aiProvider: sAIProvider.value,
     );
     await _settingsBox.put('settings', settings);
   }
