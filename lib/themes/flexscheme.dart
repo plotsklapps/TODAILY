@@ -2,25 +2,11 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:todaily/services/signal_service.dart';
 
 const Color kPink = Color(0xFFEBA1A6);
 const Color kPurple = Color(0xFF815AA3);
 const Color kOrange = Color(0xFFFCB075);
-
-final Signal<FlexScheme> sFlexScheme = Signal<FlexScheme>(
-  FlexScheme.shark,
-  debugLabel: 'sFlexScheme',
-);
-
-final Signal<bool> sDarkMode = Signal<bool>(false, debugLabel: 'sDarkMode');
-
-final Signal<bool> sWakelock = Signal<bool>(true, debugLabel: 'sWakelock');
-
-final Signal<String> sFont = Signal<String>(
-  'Questrial',
-  debugLabel: 'sFont',
-);
 
 // Override textTheme for the XL fonts.
 final TextTheme _textThemeOverrides = TextTheme(

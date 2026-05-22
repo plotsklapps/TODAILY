@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:todaily/models/journal_entry.dart';
+import 'package:todaily/services/journal_service.dart';
+import 'package:todaily/services/signal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
-import 'package:todaily/themes/stopwordslibrary.dart';
 import 'package:todaily/widgets/mosaic_cloud.dart';
 
 enum TimeRange { last30Days, last3Months, last6Months, lastYear, allTime }
@@ -21,7 +22,7 @@ class _WordCloudScreenState extends State<WordCloudScreen> {
 
   Map<String, int> _getFrequencies(Box<JournalEntry> box) {
     final Map<String, int> frequencies = <String, int>{};
-    final List<String> currentStopwords = stopwords.value;
+    final List<String> currentStopwords = sStopwords.value;
     final DateTime now = DateTime.now();
 
     DateTime? cutoff;
@@ -56,7 +57,7 @@ class _WordCloudScreenState extends State<WordCloudScreen> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final Box<JournalEntry> box = Hive.box<JournalEntry>('journals');
+    final Box<JournalEntry> box = journalService.box;
     final Map<String, int> frequencies = _getFrequencies(box);
 
     final List<MapEntry<String, int>> sortedWords = frequencies.entries.toList()

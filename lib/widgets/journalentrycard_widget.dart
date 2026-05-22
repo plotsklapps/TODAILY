@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/journaleditor_screen.dart';
-import 'package:todaily/services/format_service.dart';
 import 'package:todaily/themes/emojilibrary.dart';
+import 'package:todaily/utils/extensions.dart';
 import 'package:todaily/widgets/journalimagesrow_widget.dart';
 
 class JournalEntryCard extends StatelessWidget {
@@ -62,7 +62,7 @@ class JournalEntryCard extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: FormatService.getOrdinal(entryDate.day),
+                                text: entryDate.day.ordinalSuffix,
                                 style: theme.textTheme.titleSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),

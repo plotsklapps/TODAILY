@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:signals/signals_flutter.dart';
-
-final Signal<List<String>> sAvailableEmojis = Signal<List<String>>(
-  kEmojiMap.keys.toList(),
-  debugLabel: 'sAvailableEmojis',
-);
 
 Widget getEmojiWidget(String key) {
   return HugeIcon(

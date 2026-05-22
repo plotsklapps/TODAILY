@@ -1,41 +1,23 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gemma/flutter_gemma.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'package:todaily/firebase_options.dart';
-import 'package:todaily/models/journal_entry.dart';
-import 'package:todaily/models/settings_model.dart';
 import 'package:todaily/screens/calendar_screen.dart';
-import 'package:todaily/services/journal_service.dart';
-import 'package:todaily/services/settings_service.dart';
+import 'package:todaily/services/service_initializer.dart';
 import 'package:todaily/themes/flexscheme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase for AI purposes.
+  // Initialize Firebase.
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Initialize Hive.
-  await Hive.initFlutter();
-
-  // Open Hive boxes.
-  Hive
-    ..registerAdapter(JournalEntryAdapter())
-    ..registerAdapter(SettingsAdapter());
-
-  await journalService.init();
-  await settingsService.init();
-
-  const String token = String.fromEnvironment('HUGGINGFACE_TOKEN');
-  await FlutterGemma.initialize(
-    huggingFaceToken: token.isNotEmpty ? token : null,
-  );
+  // Boot up all Hive databases, configurations, and Gemma.
+  await ServiceInitializer.init();
 
   runApp(const MainEntry());
 }
@@ -45,7 +27,7 @@ class MainEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Wrapper for context-free snackbars.
+    // Wrapper for context-free toast notifications.
     return ToastificationWrapper(
       child: MaterialApp(
         title: 'todaily',

@@ -1,9 +1,8 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:signals/signals_flutter.dart';
 import 'package:todaily/services/settings_service.dart';
-import 'package:todaily/themes/flexscheme.dart';
+import 'package:todaily/services/signal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 
 class ThemeSettingsModal extends StatelessWidget {

@@ -1,37 +1,22 @@
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter_gemma/flutter_gemma.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hive_ce/hive.dart';
-import 'package:signals/signals_flutter.dart';
-import 'package:todaily/models/settings_model.dart';
+import 'package:todaily/services/signal_service.dart';
 
 enum AIProvider {
   geminiApi,
   localGemma,
 }
 
-final Signal<AIProvider> sAIProvider = Signal<AIProvider>(
-  AIProvider.geminiApi,
-  debugLabel: 'sAIProvider',
-);
-
-final Signal<bool> sIsDownloading = Signal<bool>(
-  false,
-  debugLabel: 'sIsDownloading',
-);
-final Signal<int> sDownloadProgress = Signal<int>(
-  0,
-  debugLabel: 'sDownloadProgress',
-);
-
 class AIService {
-  static const FlutterSecureStorage _storage = FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
   static const String _apiKeyKey = 'gemini_api_key';
   static const String localModelId = 'gemma3-270m-it-q8.litertlm';
   static const String localModelUrl =
       'https://huggingface.co/litert-community/gemma-3-270m-it/resolve/main/gemma3-270m-it-q8.litertlm';
 
-  static Future<void> downloadModel() async {
+  /// Downloads the local Gemma AI model and broadcasts download progress.
+  Future<void> downloadModel() async {
     sIsDownloading.value = true;
     sDownloadProgress.value = 0;
 
@@ -41,7 +26,7 @@ class AIService {
             modelType: ModelType.gemmaIt,
           )
           .fromNetwork(localModelUrl, token: token.isNotEmpty ? token : null)
-          .withProgress((progress) {
+          .withProgress((int progress) {
             sDownloadProgress.value = progress;
           })
           .install();
@@ -50,22 +35,26 @@ class AIService {
     }
   }
 
-  static Future<void> saveApiKey(String key) async {
+  /// Persists the Gemini API key in secure device storage.
+  Future<void> saveApiKey(String key) async {
     await _storage.write(key: _apiKeyKey, value: key);
   }
 
-  static Future<String?> getApiKey() {
+  /// Retrieves the Gemini API key from secure device storage.
+  Future<String?> getApiKey() {
     return _storage.read(key: _apiKeyKey);
   }
 
-  static Future<String> generateText(String prompt) async {
-    final Settings settings = Hive.box<Settings>('settings').get(0)!;
-
-    if (settings.aiProvider == AIProvider.localGemma) {
-      final model = await FlutterGemma.getActiveModel(maxTokens: 2048);
-      final chat = await model.createChat();
+  /// Generates text using the active AI provider
+  /// (local Gemma or cloud Gemini API).
+  Future<String> generateText(String prompt) async {
+    if (sAIProvider.value == AIProvider.localGemma) {
+      final InferenceModel model = await FlutterGemma.getActiveModel(
+        maxTokens: 2048,
+      );
+      final InferenceChat chat = await model.createChat();
       await chat.addQuery(Message.text(text: prompt, isUser: true));
-      final response = await chat.generateChatResponse();
+      final ModelResponse response = await chat.generateChatResponse();
       if (response is TextResponse) {
         return response.token;
       }
@@ -89,7 +78,8 @@ class AIService {
     return response.text ?? 'No response';
   }
 
-  static Future<String> generateTitle(String description) async {
+  /// Generates a title summarizing the journal entry text.
+  Future<String> generateTitle(String description) async {
     const String prompt =
         'Write a descriptive title for this journal entry. '
         'Output ONLY the title, 3-10 words max, no other text.';
@@ -98,3 +88,5 @@ class AIService {
     return generateText('$prompt\n\n$description');
   }
 }
+
+final AIService aiService = AIService();

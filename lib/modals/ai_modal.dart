@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gemma/flutter_gemma.dart';
-import 'package:hive_ce/hive.dart';
-import 'package:signals/signals_flutter.dart';
-import 'package:todaily/models/settings_model.dart';
 import 'package:todaily/services/ai_service.dart';
+import 'package:todaily/services/settings_service.dart';
+import 'package:todaily/services/signal_service.dart';
 import 'package:todaily/services/toast_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -30,7 +29,7 @@ class _AIModalState extends State<AIModal> {
   }
 
   Future<void> _loadKey() async {
-    final String? key = await AIService.getApiKey();
+    final String? key = await aiService.getApiKey();
     if (key != null) {
       _apiKeyController.text = key;
     }
@@ -42,24 +41,13 @@ class _AIModalState extends State<AIModal> {
         AIService.localModelId,
       );
       if (!isInstalled) {
-        await AIService.downloadModel();
+        await aiService.downloadModel();
         if (sIsDownloading.value) return; // Wait for download
       }
     }
 
-    await AIService.saveApiKey(_apiKeyController.text);
-    final Box<Settings> settingsBox = await Hive.openBox<Settings>('settings');
-    final Settings settings = settingsBox.get(0)!;
-
-    // Create a new instance to update Hive
-    final Settings newSettings = Settings(
-      wakelock: settings.wakelock,
-      darkMode: settings.darkMode,
-      flexSchemeName: settings.flexSchemeName,
-      font: settings.font,
-      aiProvider: sAIProvider.value,
-    );
-    await settingsBox.put(0, newSettings);
+    await aiService.saveApiKey(_apiKeyController.text);
+    await settingsService.updateAIProvider(sAIProvider.value);
 
     ToastService.showSuccess(
       title: 'Settings Saved',

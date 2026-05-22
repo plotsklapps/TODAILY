@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:signals/signals_flutter.dart';
 import 'package:todaily/modals/menu_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/journaleditor_screen.dart';
 import 'package:todaily/services/modal_service.dart';
+import 'package:todaily/services/signal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 import 'package:todaily/widgets/journalentrycard_widget.dart';
-
-final Signal<List<JournalEntry>> journalBoxSignal = Signal<List<JournalEntry>>(
-  Hive.box<JournalEntry>('journals').values.toList(),
-);
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -35,13 +30,6 @@ class _CalendarScreenState extends State<CalendarScreen>
       initialIndex: DateTime.now().month - 1,
       vsync: this,
     );
-
-    // Update Signal whenever data in Hive 'journals' box changes.
-    Hive.box<JournalEntry>('journals').listenable().addListener(() {
-      journalBoxSignal.value = Hive.box<JournalEntry>(
-        'journals',
-      ).values.toList();
-    });
   }
 
   @override
@@ -53,7 +41,7 @@ class _CalendarScreenState extends State<CalendarScreen>
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    journalBoxSignal.watch(context);
+    sJournalEntries.watch(context);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -67,7 +55,7 @@ class _CalendarScreenState extends State<CalendarScreen>
             final String monthName = DateFormat(
               'MMMM',
             ).format(DateTime(currentYear, month));
-            final int count = journalBoxSignal.value.where((JournalEntry e) {
+            final int count = sJournalEntries.value.where((JournalEntry e) {
               final DateTime date = DateTime.parse(e.dateKey);
               return date.month == month && date.year == currentYear;
             }).length;
@@ -96,7 +84,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                           count.toString().padLeft(2, '0'),
                           style: TextStyle(
                             color: Theme.of(
-                              context,
+                                context,
                             ).colorScheme.onSecondary,
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
@@ -114,7 +102,7 @@ class _CalendarScreenState extends State<CalendarScreen>
         controller: _tabController,
         children: List<Widget>.generate(12, (int monthIndex) {
           final int month = monthIndex + 1;
-          final List<JournalEntry> monthEntries = journalBoxSignal.value.where((
+          final List<JournalEntry> monthEntries = sJournalEntries.value.where((
             JournalEntry e,
           ) {
             final DateTime date = DateTime.parse(e.dateKey);

@@ -2,12 +2,14 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:todaily/models/settings_model.dart';
 import 'package:todaily/services/ai_service.dart';
-import 'package:todaily/themes/flexscheme.dart';
+import 'package:todaily/services/signal_service.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class SettingsService {
   late Box<Settings> _settingsBox;
 
+  /// Initializes the settings database, opens 'settingsBox',
+  /// and loads preferences.
   Future<void> init() async {
     _settingsBox = await Hive.openBox<Settings>('settingsBox');
 
@@ -28,7 +30,7 @@ class SettingsService {
       sAIProvider.value = AIProvider.geminiApi;
     }
 
-    // Apply initial wakelock
+    // Apply initial wakelock state
     if (sWakelock.value) {
       await WakelockPlus.enable();
     } else {
@@ -69,6 +71,11 @@ class SettingsService {
 
   Future<void> updateFont(String font) async {
     sFont.value = font;
+    await _saveSettings();
+  }
+
+  Future<void> updateAIProvider(AIProvider provider) async {
+    sAIProvider.value = provider;
     await _saveSettings();
   }
 }

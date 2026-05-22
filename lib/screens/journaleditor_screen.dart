@@ -6,10 +6,11 @@ import 'package:todaily/modals/emojipicker_modal.dart';
 import 'package:todaily/modals/imagepicker_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/services/ai_service.dart';
-import 'package:todaily/services/format_service.dart';
 import 'package:todaily/services/journal_service.dart';
 import 'package:todaily/services/modal_service.dart';
+import 'package:todaily/services/signal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
+import 'package:todaily/utils/extensions.dart';
 import 'package:todaily/widgets/charcounter_widget.dart';
 
 class JournalEditorScreen extends StatefulWidget {
@@ -94,7 +95,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
         automaticallyImplyLeading: false,
         title: Text(
           DateFormat(
-            "yyyy, MMMM d'${FormatService.getOrdinal(widget.date.day)}'",
+            "yyyy, MMMM d'${widget.date.day.ordinalSuffix}'",
           ).format(widget.date),
           style: theme.textTheme.titleLarge!.copyWith(
             fontWeight: FontWeight.bold,
@@ -223,11 +224,11 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                             .toPlainText();
 
                         // Check if API key exists.
-                        final String? apiKey = await AIService.getApiKey();
+                        final String? apiKey = await aiService.getApiKey();
                         String generatedTitle;
 
                         if (apiKey != null && apiKey.isNotEmpty) {
-                          generatedTitle = await AIService.generateTitle(
+                          generatedTitle = await aiService.generateTitle(
                             journalText,
                           );
                         } else {

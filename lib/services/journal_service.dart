@@ -1,12 +1,21 @@
-import 'package:hive_ce/hive.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:todaily/models/journal_entry.dart';
+import 'package:todaily/services/signal_service.dart';
 
 class JournalService {
   late Box<JournalEntry> _journalBox;
 
+  /// Exposes the underlying Hive journal box.
+  Box<JournalEntry> get box => _journalBox;
+
+  /// Initializes the journal database, opening 'journalBox'.
   Future<void> init() async {
-    _journalBox = await Hive.openBox<JournalEntry>('journals');
+    _journalBox = await Hive.openBox<JournalEntry>('journalBox');
+    sJournalEntries.value = _journalBox.values.toList();
+    _journalBox.listenable().addListener(() {
+      sJournalEntries.value = _journalBox.values.toList();
+    });
   }
 
   Future<void> createJournal(JournalEntry entry) async {

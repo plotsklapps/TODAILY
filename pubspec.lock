@@ -442,10 +442,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_gemma
-      sha256: ab4986d21bbd700c408ba539873cc93291cd60696ba9733faa74b42ab413e96f
+      sha256: a56c1745a6218fac9c3456d7449a8dbdd684a870cb73f407fcf47f38f1e3633e
       url: "https://pub.dev"
     source: hosted
-    version: "0.16.0"
+    version: "0.16.1"
   flutter_keyboard_visibility_linux:
     dependency: transitive
     description:
@@ -543,18 +543,18 @@ packages:
     dependency: transitive
     description:
       name: flutter_secure_storage_darwin
-      sha256: "67cd1ff671add31dc13e45194398187a04bb63804b37fa47866afae296d73fcb"
+      sha256: "82329fa5cdf343773b1b6897dea959105a29f092454259edff92f9f6637e8149"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.1"
+    version: "0.3.2"
   flutter_secure_storage_linux:
     dependency: transitive
     description:
       name: flutter_secure_storage_linux
-      sha256: "2b5c76dce569ab752d55a1cee6a2242bcc11fdba927078fb88c503f150767cda"
+      sha256: a5f35ddab43cf5c8215d2feb4ce1957851f28c5c37e6f04335066a0602087bf5
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "3.0.1"
   flutter_secure_storage_platform_interface:
     dependency: transitive
     description:

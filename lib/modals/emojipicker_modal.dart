@@ -1,18 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:todaily/services/signal_service.dart';
 import 'package:todaily/services/toast_service.dart';
 import 'package:todaily/themes/emojilibrary.dart';
-
-// We store the keys (String) in Hive for JournalEntry.
-final Signal<List<String>> sSelectedEmojis = Signal<List<String>>(
-  <String>[],
-  debugLabel: 'sSelectedEmojis',
-);
-
-final Signal<List<String>> sAvailableEmojis = Signal<List<String>>(
-  kEmojiMap.keys.toList(),
-  debugLabel: 'sAvailableEmojis',
-);
 
 class EmojiPickerModal extends StatefulWidget {
   const EmojiPickerModal({

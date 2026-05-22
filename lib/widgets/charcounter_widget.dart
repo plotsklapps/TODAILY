@@ -3,14 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:signals/signals_flutter.dart';
 import 'package:todaily/services/modal_service.dart';
-
-// Global signal for the character limit
-final Signal<int> sMaxCharacters = Signal<int>(
-  0,
-  debugLabel: 'sMaxCharacters',
-);
+import 'package:todaily/services/signal_service.dart';
 
 class CharCounterWidget extends StatelessWidget {
   const CharCounterWidget({

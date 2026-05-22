@@ -2,14 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:signals/signals_flutter.dart';
+import 'package:todaily/services/signal_service.dart';
 import 'package:todaily/services/toast_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
-
-final Signal<List<String>> sSelectedImages = Signal<List<String>>(
-  <String>[],
-  debugLabel: 'sSelectedImages',
-);
 
 class ImagePickerModal extends StatefulWidget {
   const ImagePickerModal({
