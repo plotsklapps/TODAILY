@@ -132,9 +132,11 @@ class _AIModalState extends State<AIModal> {
                       const TextSpan(
                         text:
                             '.\n'
-                            '2. Go to Settings > Access Tokens > Create New Token.\n'
+                            '2. Go to Settings > Access Tokens > Create New '
+                            'Token.\n'
                             '3. Select "Read" permissions and save it.\n'
-                            '4. Visit the model page and agree to the conditions:\n',
+                            '4. Visit the model page and agree to the '
+                            'conditions:\n',
                       ),
                       TextSpan(
                         text: 'Gemma 3 270m Model Page',
