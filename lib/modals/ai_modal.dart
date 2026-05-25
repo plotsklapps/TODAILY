@@ -20,19 +20,21 @@ class AIModal extends StatefulWidget {
 
 class _AIModalState extends State<AIModal> {
   final TextEditingController _apiKeyController = TextEditingController();
+  final TextEditingController _hfTokenController = TextEditingController();
   bool _isApiKeyVisible = false;
+  bool _isTokenVisible = false;
 
   @override
   void initState() {
     super.initState();
-    unawaited(_loadKey());
+    unawaited(_loadSecrets());
   }
 
-  Future<void> _loadKey() async {
-    final String? key = await aiService.getApiKey();
-    if (key != null) {
-      _apiKeyController.text = key;
-    }
+  Future<void> _loadSecrets() async {
+    final String? apiKey = await aiService.getApiKey();
+    final String? hfToken = await aiService.getHuggingFaceToken();
+    if (apiKey != null) _apiKeyController.text = apiKey;
+    if (hfToken != null) _hfTokenController.text = hfToken;
   }
 
   Future<void> _saveSettings() async {
@@ -47,129 +49,166 @@ class _AIModalState extends State<AIModal> {
     }
 
     await aiService.saveApiKey(_apiKeyController.text);
+    await aiService.saveHuggingFaceToken(_hfTokenController.text);
     await settingsService.updateAIProvider(sAIProvider.value);
 
     ToastService.showSuccess(
       title: 'Settings Saved',
-      subtitle: 'AI provider and API key updated.',
+      subtitle: 'AI provider and keys updated.',
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const Text(
-          'todaily lets you use your own Gemini API key for text generation, '
-          'journal insights, and chat features.\n\nYour data is sent directly '
-          'to Google’s Gemini API and is never stored or shared by todaily.',
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 24),
-        SegmentedButton<AIProvider>(
-          segments: const <ButtonSegment<AIProvider>>[
-            ButtonSegment<AIProvider>(
-              value: AIProvider.geminiApi,
-              label: Text('Gemini API'),
-              icon: Icon(Icons.cloud),
-            ),
-            ButtonSegment<AIProvider>(
-              value: AIProvider.localGemma,
-              label: Text('Local Gemma'),
-              icon: Icon(Icons.smartphone),
-            ),
-          ],
-          selected: <AIProvider>{sAIProvider.watch(context)},
-          onSelectionChanged: (Set<AIProvider> newSelection) {
-            sAIProvider.value = newSelection.first;
-          },
-        ),
-        const SizedBox(height: 24),
-        if (sAIProvider.watch(context) == AIProvider.localGemma)
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.orange.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.orange),
-            ),
-            child: Column(
-              children: <Widget>[
-                const Text(
-                  '⚠️ Large Download',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.orange,
-                  ),
+    final ThemeData theme = Theme.of(context);
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const Text(
+            'todaily keeps your AI usage private and secure. You can use your '
+            'own Gemini API key, or download a compact LLM directly to your '
+            'device for full offline capability.\n\n'
+            'Both options ensure your data remains yours and is never stored '
+            'or shared by todaily.',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: SegmentedButton<AIProvider>(
+                  segments: <ButtonSegment<AIProvider>>[
+                    ButtonSegment<AIProvider>(
+                      value: AIProvider.geminiApi,
+                      label: const Text('Gemini API'),
+                      icon: IconLibrary.iconUpload,
+                    ),
+                    ButtonSegment<AIProvider>(
+                      value: AIProvider.localGemma,
+                      label: const Text('Local Gemma'),
+                      icon: IconLibrary.iconDownload,
+                    ),
+                  ],
+                  selected: <AIProvider>{sAIProvider.watch(context)},
+                  onSelectionChanged: (Set<AIProvider> newSelection) {
+                    sAIProvider.value = newSelection.first;
+                  },
                 ),
-                const SizedBox(height: 8),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (sAIProvider.watch(context) == AIProvider.localGemma)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 const Text(
-                  'Downloading the local Gemma model requires ~300MB of data. '
-                  'Please use Wi-Fi if possible.',
-                  textAlign: TextAlign.center,
+                  'To use the local model, you need a HuggingFace access token. '
+                  'Go to huggingface.co, log in, go to Settings > Access Tokens, '
+                  'and create a new token with "Read" permissions.',
                   style: TextStyle(fontSize: 12),
                 ),
-                if (sIsDownloading.watch(context)) ...<Widget>[
-                  const SizedBox(height: 16),
-                  LinearProgressIndicator(
-                    value: sDownloadProgress.watch(context) / 100,
+                const SizedBox(height: 8),
+                Container(
+                  height: 48,
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  alignment: Alignment.centerLeft,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: theme.colorScheme.primary),
                   ),
-                  const SizedBox(height: 8),
-                  Text('${sDownloadProgress.value}%'),
-                ],
+                  child: sIsDownloading.watch(context)
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                                child: LinearProgressIndicator(
+                                  value: sDownloadProgress.watch(context) / 100,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text('${sDownloadProgress.value}%'),
+                            ],
+                          ),
+                        )
+                      : TextField(
+                          controller: _hfTokenController,
+                          decoration: InputDecoration(
+                            labelText: 'HuggingFace Access Token',
+                            border: InputBorder.none,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isTokenVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isTokenVisible = !_isTokenVisible;
+                                });
+                              },
+                            ),
+                          ),
+                          obscureText: !_isTokenVisible,
+                        ),
+                ),
               ],
             ),
-          ),
-        const SizedBox(height: 24),
-        if (sAIProvider.watch(context) == AIProvider.geminiApi)
-          TextField(
-            controller: _apiKeyController,
-            decoration: InputDecoration(
-              labelText: 'Gemini API Key',
-              suffixIcon: IconButton(
-                icon: _isApiKeyVisible
-                    ? IconLibrary.iconEyeShut
-                    : IconLibrary.iconEyeOpen,
-
-                onPressed: () {
-                  setState(() {
-                    _isApiKeyVisible = !_isApiKeyVisible;
-                  });
-                },
-              ),
+          if (sAIProvider.watch(context) == AIProvider.geminiApi)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'To use the Gemini API, you need an API key. '
+                  'Visit ai.google.dev, log in with your Google account, '
+                  'and create a new API key in the Google AI Studio.',
+                  style: TextStyle(fontSize: 12),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 48,
+                  child: TextField(
+                    controller: _apiKeyController,
+                    decoration: InputDecoration(
+                      labelText: 'Gemini API Key',
+                      suffixIcon: IconButton(
+                        icon: _isApiKeyVisible
+                            ? IconLibrary.iconEyeShut
+                            : IconLibrary.iconEyeOpen,
+                        onPressed: () {
+                          setState(() {
+                            _isApiKeyVisible = !_isApiKeyVisible;
+                          });
+                        },
+                      ),
+                    ),
+                    obscureText: !_isApiKeyVisible,
+                  ),
+                ),
+              ],
             ),
-            obscureText: !_isApiKeyVisible,
-          ),
-        const SizedBox(height: 20),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () async {
-                  final Uri url = Uri.parse(
-                    'https://ai.google.dev/gemini-api/docs/api-key',
-                  );
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
-                },
-                child: const Text('Get API Key'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton(
-                onPressed: sIsDownloading.value ? null : _saveSettings,
-                child: Text(
-                  sIsDownloading.watch(context)
-                      ? 'Downloading...'
-                      : 'Save Settings',
+          const SizedBox(height: 20),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: FilledButton(
+                  onPressed: sIsDownloading.value ? null : _saveSettings,
+                  child: Text(
+                    sIsDownloading.watch(context)
+                        ? 'Downloading...'
+                        : 'Save Settings',
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

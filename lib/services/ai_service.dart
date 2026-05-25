@@ -10,7 +10,8 @@ enum AIProvider {
 
 class AIService {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  static const String _apiKeyKey = 'gemini_api_key';
+  static const String _geminiApiKey = 'gemini_api_key';
+  static const String _hfTokenKey = 'huggingface_token';
   static const String localModelId = 'gemma3-270m-it-q8.litertlm';
   static const String localModelUrl =
       'https://huggingface.co/litert-community/gemma-3-270m-it/resolve/main/gemma3-270m-it-q8.litertlm';
@@ -21,15 +22,13 @@ class AIService {
     sDownloadProgress.value = 0;
 
     try {
-      const String token = String.fromEnvironment('HUGGINGFACE_TOKEN');
+      final String? token = await getHuggingFaceToken();
+
       await FlutterGemma.installModel(
-            modelType: ModelType.gemmaIt,
-          )
-          .fromNetwork(localModelUrl, token: token.isNotEmpty ? token : null)
-          .withProgress((int progress) {
-            sDownloadProgress.value = progress;
-          })
-          .install();
+        modelType: ModelType.gemmaIt,
+      ).fromNetwork(localModelUrl, token: token).withProgress((int progress) {
+        sDownloadProgress.value = progress;
+      }).install();
     } finally {
       sIsDownloading.value = false;
     }
@@ -37,12 +36,22 @@ class AIService {
 
   /// Persists the Gemini API key in secure device storage.
   Future<void> saveApiKey(String key) async {
-    await _storage.write(key: _apiKeyKey, value: key);
+    await _storage.write(key: _geminiApiKey, value: key);
   }
 
   /// Retrieves the Gemini API key from secure device storage.
   Future<String?> getApiKey() {
-    return _storage.read(key: _apiKeyKey);
+    return _storage.read(key: _geminiApiKey);
+  }
+
+  /// Persists the HuggingFace token in secure device storage.
+  Future<void> saveHuggingFaceToken(String token) async {
+    await _storage.write(key: _hfTokenKey, value: token);
+  }
+
+  /// Retrieves the HuggingFace token from secure device storage.
+  Future<String?> getHuggingFaceToken() {
+    return _storage.read(key: _hfTokenKey);
   }
 
   /// Generates text using the active AI provider
@@ -68,7 +77,7 @@ class AIService {
 
     // Use Gemini 3.1 Flash Lite for now to keep costs low and speed high.
     final GenerativeModel model = FirebaseAI.googleAI().generativeModel(
-      model: 'gemini-3.1-flash-lite',
+      model: 'gemini-1.5-flash',
     );
 
     final GenerateContentResponse response = await model.generateContent(

@@ -16,7 +16,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Boot up all Hive databases, configurations, and Gemma.
+  // Boot up all Hive databases, configurations and Gemma.
   await ServiceInitializer.init();
 
   runApp(const MainEntry());
