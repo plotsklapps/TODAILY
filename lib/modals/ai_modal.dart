@@ -24,6 +24,7 @@ class _AIModalState extends State<AIModal> {
   final TextEditingController _hfTokenController = TextEditingController();
   bool _isApiKeyVisible = false;
   bool _isTokenVisible = false;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -39,29 +40,45 @@ class _AIModalState extends State<AIModal> {
   }
 
   Future<void> _saveSettings() async {
-    if (sAIProvider.value == AIProvider.localGemma) {
-      final bool isInstalled = await FlutterGemma.isModelInstalled(
-        AIService.localModelId,
+    setState(() => _isSaving = true);
+    try {
+      if (sAIProvider.value == AIProvider.localGemma) {
+        final bool isInstalled = await FlutterGemma.isModelInstalled(
+          AIService.localModelId,
+        );
+        if (!isInstalled) {
+          await aiService.downloadModel();
+        }
+      } else {
+        // Mock progress for Gemini API save
+        await Future<void>.delayed(const Duration(seconds: 2));
+      }
+
+      await aiService.saveApiKey(_apiKeyController.text.trim());
+      await aiService.saveHFToken(_hfTokenController.text.trim());
+      await settingsService.updateAIProvider(sAIProvider.value);
+
+      ToastService.showSuccess(
+        title: 'AI Settings Saved!',
+        subtitle: 'Provider and key/token updated.',
       );
-      if (!isInstalled) {
-        await aiService.downloadModel();
-        if (sIsDownloading.value) return; // Wait for download
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
       }
     }
-
-    await aiService.saveApiKey(_apiKeyController.text);
-    await aiService.saveHFToken(_hfTokenController.text);
-    await settingsService.updateAIProvider(sAIProvider.value);
-
-    ToastService.showSuccess(
-      title: 'Settings Saved',
-      subtitle: 'AI provider and keys updated.',
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final bool isDownloading = sIsDownloading.watch(context);
+    final bool isSaving = _isSaving || isDownloading;
 
     return SingleChildScrollView(
       child: Column(
@@ -101,6 +118,8 @@ class _AIModalState extends State<AIModal> {
             ],
           ),
           const SizedBox(height: 8),
+
+          // LOCAL GEMMA.
           if (sAIProvider.watch(context) == AIProvider.localGemma)
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -168,50 +187,22 @@ class _AIModalState extends State<AIModal> {
                 ),
 
                 const SizedBox(height: 8),
-                Container(
-                  height: 48,
-                  width: double.infinity,
-                  alignment: Alignment.centerLeft,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: theme.colorScheme.primary),
+                TextField(
+                  controller: _hfTokenController,
+                  decoration: InputDecoration(
+                    labelText: 'HuggingFace Access Token',
+                    suffixIcon: IconButton(
+                      icon: _isTokenVisible
+                          ? IconLibrary.iconEyeShut
+                          : IconLibrary.iconEyeOpen,
+                      onPressed: () {
+                        setState(() {
+                          _isTokenVisible = !_isTokenVisible;
+                        });
+                      },
+                    ),
                   ),
-                  child: sIsDownloading.watch(context)
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                child: LinearProgressIndicator(
-                                  value: sDownloadProgress.watch(context) / 100,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text('${sDownloadProgress.value}%'),
-                            ],
-                          ),
-                        )
-                      : TextField(
-                          controller: _hfTokenController,
-                          decoration: InputDecoration(
-                            labelText: 'HuggingFace Access Token',
-                            border: InputBorder.none,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _isTokenVisible
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _isTokenVisible = !_isTokenVisible;
-                                });
-                              },
-                            ),
-                          ),
-                          obscureText: !_isTokenVisible,
-                        ),
+                  obscureText: !_isTokenVisible,
                 ),
               ],
             ),
@@ -262,25 +253,22 @@ class _AIModalState extends State<AIModal> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                SizedBox(
-                  height: 48,
-                  child: TextField(
-                    controller: _apiKeyController,
-                    decoration: InputDecoration(
-                      labelText: 'Gemini API Key',
-                      suffixIcon: IconButton(
-                        icon: _isApiKeyVisible
-                            ? IconLibrary.iconEyeShut
-                            : IconLibrary.iconEyeOpen,
-                        onPressed: () {
-                          setState(() {
-                            _isApiKeyVisible = !_isApiKeyVisible;
-                          });
-                        },
-                      ),
+                TextField(
+                  controller: _apiKeyController,
+                  decoration: InputDecoration(
+                    labelText: 'Gemini API Key',
+                    suffixIcon: IconButton(
+                      icon: _isApiKeyVisible
+                          ? IconLibrary.iconEyeShut
+                          : IconLibrary.iconEyeOpen,
+                      onPressed: () {
+                        setState(() {
+                          _isApiKeyVisible = !_isApiKeyVisible;
+                        });
+                      },
                     ),
-                    obscureText: !_isApiKeyVisible,
                   ),
+                  obscureText: !_isApiKeyVisible,
                 ),
               ],
             ),
@@ -289,12 +277,29 @@ class _AIModalState extends State<AIModal> {
             children: <Widget>[
               Expanded(
                 child: FilledButton(
-                  onPressed: sIsDownloading.value ? null : _saveSettings,
-                  child: Text(
-                    sIsDownloading.watch(context)
-                        ? 'Downloading...'
-                        : 'Save Settings',
-                  ),
+                  onPressed: isSaving ? null : _saveSettings,
+                  child: isSaving
+                      ? SizedBox(
+                          height: 24,
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: LinearProgressIndicator(
+                                  value:
+                                      sAIProvider.value == AIProvider.localGemma
+                                      ? sDownloadProgress.watch(context) / 100
+                                      : null,
+                                ),
+                              ),
+                              if (sAIProvider.value ==
+                                  AIProvider.localGemma) ...[
+                                const SizedBox(width: 8),
+                                Text('${sDownloadProgress.value}%'),
+                              ],
+                            ],
+                          ),
+                        )
+                      : const Text('Save Settings'),
                 ),
               ),
             ],
