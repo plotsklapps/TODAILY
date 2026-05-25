@@ -109,4 +109,12 @@ class IconLibrary {
   static Widget iconFont = const HugeIcon(
     icon: HugeIcons.strokeRoundedTextFont,
   );
+
+  static Widget iconDownload = const HugeIcon(
+    icon: HugeIcons.strokeRoundedPhoneArrowDown,
+  );
+
+  static Widget iconUpload = const HugeIcon(
+    icon: HugeIcons.strokeRoundedCloudUpload,
+  );
 }
