@@ -41,8 +41,20 @@ class _AIModalState extends State<AIModal> {
 
   Future<void> _saveSettings() async {
     setState(() => _isSaving = true);
+    final String apiKey = _apiKeyController.text.trim();
+    final String hfToken = _hfTokenController.text.trim();
+
     try {
+      // 1. Save ApiKey and HuggingFace token first so they are available
+      await aiService.saveApiKey(apiKey);
+      await aiService.saveHFToken(hfToken);
+      await settingsService.updateAIProvider(sAIProvider.value);
+
+      // 2. Perform provider-specific setup/downloads
       if (sAIProvider.value == AIProvider.localGemma) {
+        // Re-initialize FlutterGemma with the newly saved token
+        await FlutterGemma.initialize(huggingFaceToken: hfToken);
+
         final bool isInstalled = await FlutterGemma.isModelInstalled(
           AIService.localModelId,
         );
@@ -54,13 +66,17 @@ class _AIModalState extends State<AIModal> {
         await Future<void>.delayed(const Duration(seconds: 2));
       }
 
-      await aiService.saveApiKey(_apiKeyController.text.trim());
-      await aiService.saveHFToken(_hfTokenController.text.trim());
-      await settingsService.updateAIProvider(sAIProvider.value);
-
       ToastService.showSuccess(
         title: 'AI Settings Saved!',
-        subtitle: 'Provider and key/token updated.',
+        subtitle: 'Provider and credentials successfully updated.',
+      );
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      ToastService.showError(
+        title: 'Error Saving Settings',
+        subtitle: 'An error occurred: $e',
       );
       if (mounted) {
         Navigator.of(context).pop();
