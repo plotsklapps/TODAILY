@@ -308,7 +308,7 @@ class _AIModalState extends State<AIModal> {
                                 ),
                               ),
                               if (sAIProvider.value ==
-                                  AIProvider.localGemma) ...[
+                                  AIProvider.localGemma) ...<Widget>[
                                 const SizedBox(width: 8),
                                 Text('${sDownloadProgress.value}%'),
                               ],
