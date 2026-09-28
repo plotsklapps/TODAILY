@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:todaily/modals/ai_modal.dart';
 import 'package:todaily/modals/themesettings_modal.dart';
 import 'package:todaily/screens/wordcloud_screen.dart';

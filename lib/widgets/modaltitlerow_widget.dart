@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:todaily/themes/iconlibrary.dart';
 
 class ModalTitleRow extends StatelessWidget {

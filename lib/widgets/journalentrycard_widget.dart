@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/journaleditor_screen.dart';

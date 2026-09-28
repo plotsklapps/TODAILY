@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 import 'package:todaily/modals/menu_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
