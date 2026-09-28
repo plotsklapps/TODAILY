@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 
 Widget getEmojiWidget(String key) {
   return HugeIcon(

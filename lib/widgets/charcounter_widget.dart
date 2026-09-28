@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:todaily/services/modal_service.dart';
 import 'package:todaily/services/signal_service.dart';
 

@@ -1,7 +1,7 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:todaily/modals/emojipicker_modal.dart';
 import 'package:todaily/modals/imagepicker_modal.dart';
 import 'package:todaily/models/journal_entry.dart';

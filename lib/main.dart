@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:signals/signals_flutter.dart';
 import 'package:toastification/toastification.dart';
 import 'package:todaily/firebase_options.dart';

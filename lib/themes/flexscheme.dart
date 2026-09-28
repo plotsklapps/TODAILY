@@ -1,7 +1,7 @@
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:todaily/services/signal_service.dart';
 
 const Color kPink = Color(0xFFEBA1A6);

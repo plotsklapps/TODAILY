@@ -32,9 +32,9 @@ dependencies:
   toastification: ^3.2.0
   url_launcher: ^6.3.2
   wakelock_plus: ^1.5.2
-
   material_ui: any
   cupertino_ui: any
+
 dev_dependencies:
   build_runner: ^2.15.0
   flutter_test:

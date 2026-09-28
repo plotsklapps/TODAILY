@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_gemma/flutter_gemma.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:todaily/services/ai_service.dart';
 import 'package:todaily/services/settings_service.dart';
 import 'package:todaily/services/signal_service.dart';

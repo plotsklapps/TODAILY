@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:todaily/modals/menu_modal.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/screens/journaleditor_screen.dart';
@@ -83,9 +83,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                         child: Text(
                           count.toString().padLeft(2, '0'),
                           style: TextStyle(
-                            color: Theme.of(
-                                context,
-                            ).colorScheme.onSecondary,
+                            color: Theme.of(context).colorScheme.onSecondary,
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                           ),
@@ -116,9 +114,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                 children: <Widget>[
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text('No entries this month.'),
-                    ],
+                    children: <Widget>[Text('No entries this month.')],
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -139,13 +135,12 @@ class _CalendarScreenState extends State<CalendarScreen>
             itemBuilder: (_, int index) {
               // Sort by date descending (most recent first)
               final List<JournalEntry> sortedEntries =
-                  List<JournalEntry>.from(
-                    monthEntries,
-                  )..sort((JournalEntry a, JournalEntry b) {
-                    return DateTime.parse(b.dateKey).compareTo(
-                      DateTime.parse(a.dateKey),
-                    );
-                  });
+                  List<JournalEntry>.from(monthEntries)
+                    ..sort((JournalEntry a, JournalEntry b) {
+                      return DateTime.parse(
+                        b.dateKey,
+                      ).compareTo(DateTime.parse(a.dateKey));
+                    });
 
               final JournalEntry entry = sortedEntries[index];
 
@@ -188,10 +183,7 @@ class _CalendarScreenState extends State<CalendarScreen>
                   'todaily',
                   style: theme.textTheme.displaySmall!.copyWith(fontSize: 26),
                 ),
-                Text(
-                  '2026',
-                  style: theme.textTheme.bodySmall,
-                ),
+                Text('$currentYear', style: theme.textTheme.bodySmall),
               ],
             ),
             const SizedBox(width: 48),

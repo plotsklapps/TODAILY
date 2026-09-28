@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:todaily/models/journal_entry.dart';
 import 'package:todaily/services/journal_service.dart';
 import 'package:todaily/services/signal_service.dart';
@@ -61,11 +61,9 @@ class _WordCloudScreenState extends State<WordCloudScreen> {
     final Map<String, int> frequencies = _getFrequencies(box);
 
     final List<MapEntry<String, int>> sortedWords = frequencies.entries.toList()
-      ..sort(
-        (MapEntry<String, int> a, MapEntry<String, int> b) {
-          return b.value.compareTo(a.value);
-        },
-      );
+      ..sort((MapEntry<String, int> a, MapEntry<String, int> b) {
+        return b.value.compareTo(a.value);
+      });
     final List<MapEntry<String, int>> topWords = sortedWords.take(250).toList();
 
     return Scaffold(
@@ -86,11 +84,7 @@ class _WordCloudScreenState extends State<WordCloudScreen> {
               spacing: 10,
               children: topWords.map((MapEntry<String, int> entry) {
                 final double size =
-                    24 +
-                    (entry.value.toDouble() * 5.0).clamp(
-                      0,
-                      72,
-                    );
+                    24 + (entry.value.toDouble() * 5.0).clamp(0, 72);
                 final bool rotate = entry.key.length % 3 == 0;
 
                 final Widget wordWidget = Text(

@@ -1,6 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:todaily/services/settings_service.dart';
 import 'package:todaily/services/signal_service.dart';
 import 'package:todaily/themes/iconlibrary.dart';
